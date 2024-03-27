@@ -6,8 +6,6 @@ export const signup = async (req, res) => {
   try {
     const { email, password, confirmPassword } = req.body;
 
-    console.log(password);
-    console.log(typeof password);
     if (password !== confirmPassword) {
       return res.status(400).json({ error: "Passwords do not match" });
     }
@@ -18,38 +16,25 @@ export const signup = async (req, res) => {
       return res.status(400).json({ error: "Email already exits" });
     }
 
-    // HASING PASSWORD
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10); // HASING PASSWORD
 
     //https://avatar-placeholder.iran.liara.run/
     const userProfilePic = "https://avatar.iran.liara.run/public/35";
 
     //CREATE NEW USER PROFILE
-    console.log("Creating new user with data:", {
-      // username,
-      email,
-      password,
-      confirmPassword,
-    });
-
-    console.log(typeof password);
-
-    const newUser = new User({
-      // username,
+    const user = new User({
       email,
       password: hashedPassword,
       profilePic: userProfilePic,
     });
 
-    if (newUser) {
-      genrateTokenAndSetCookie(newUser.id, res);
-
-      await newUser.save(); // SAVE USER PROFILE
+    if (user) {
+      genrateTokenAndSetCookie(user.id, res);
+      await user.save(); // SAVE USER PROFILE
 
       res.status(201).json({
-        id: newUser.id,
-        // username: newUser.username,
-        email: newUser.email,
+        id: user.id,
+        email: user.email,
       });
     } else {
       res.status(400).json({ error: "Invalid user data" });
@@ -67,7 +52,7 @@ export const login = async (req, res) => {
     const isPasswordTrue = await bcrypt.compare(password, user?.password || "");
 
     if (!user) {
-      return res.status(400).send({ message: "Invalid username." });
+      return res.status(400).send({ message: "Invalid user email." });
     }
     if (!isPasswordTrue) {
       return res.status(400).send({ message: "Invalid password" });
@@ -83,6 +68,52 @@ export const login = async (req, res) => {
   } catch (error) {
     console.log("error in signup controller", error);
     res.status(500).json({ error: error.message });
+  }
+};
+
+export const getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+      res.json({
+        _id: user._id,
+        name: user.username || "",
+        email: user.email,
+        age: user.age,
+        gender: user.gender,
+      });
+    } else {
+      res.status(404);
+    }
+  } catch (error) {
+    res.status(404).json(error);
+  }
+};
+
+export const updateUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+      user.email = req.body.email || user.email;
+      user.username = req.body.username;
+      user.age = req.body.age;
+      user.gender = req.body.gender;
+
+      if (req.body.password) {
+        user.password = req.body.password;
+      }
+
+      const updatedUser = await user.save();
+
+      res.json({
+        _id: updatedUser._id,
+        email: updatedUser.email,
+      });
+    }
+  } catch (error) {
+    res.status(404).json({ error: error.message });
   }
 };
 
