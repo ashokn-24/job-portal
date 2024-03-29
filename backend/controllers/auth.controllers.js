@@ -25,6 +25,11 @@ export const signup = async (req, res) => {
     const user = new User({
       email,
       password: hashedPassword,
+    });
+
+    console.log({
+      email,
+      password: hashedPassword,
       profilePic: userProfilePic,
     });
 

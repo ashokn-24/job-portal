@@ -1,32 +1,25 @@
 import { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
+import { Link } from "react-router-dom";
+import UseSignup from "../../hooks/useSignup";
 
 const Signup = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [inputs, setInputs] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-  function handleSubmit(e) {
-    const newUser = {
-      email: email,
-      password: password,
-      confirmPassword: confirmPassword,
-    };
+  const { loading, signup } = UseSignup();
 
-    axios
-      .post("http://localhost:8000/auth/signup", newUser)
-      .then(() => {
-        console.log("usesr created");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(email);
-    console.log(password);
-    console.log(confirmPassword);
-  }
+    await signup(inputs);
+
+    console.log(inputs.email);
+    console.log(inputs.password);
+    console.log(inputs.confirmPassword);
+  };
 
   return (
     <div className="flex justify-center items-center h-screen">
@@ -36,14 +29,14 @@ const Signup = () => {
       >
         <h2 className="text-2xl font-semibold mb-6 text-center">Sign Up</h2>
         <div className="mb-4">
-          <label htmlFor="email" className="block mb-2 font-semibold">
+          <label htmlFor="input.email" className="block mb-2 font-semibold">
             Email
           </label>
           <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="input.email"
+            id="input.email"
+            value={inputs.email}
+            onChange={(e) => setInputs({ ...inputs, email: e.target.value })}
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
             required
           />
@@ -55,8 +48,8 @@ const Signup = () => {
           <input
             type="password"
             id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={inputs.password}
+            onChange={(e) => setInputs({ ...inputs, password: e.target.value })}
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
             required
           />
@@ -68,8 +61,10 @@ const Signup = () => {
           <input
             type="password"
             id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            value={inputs.confirmPassword}
+            onChange={(e) =>
+              setInputs({ ...inputs, confirmPassword: e.target.value })
+            }
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
             required
           />
@@ -77,16 +72,21 @@ const Signup = () => {
         <div className="mb-6">
           <button
             type="submit"
+            disabled={loading}
             className="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
           >
-            Sign Up
+            {loading ? (
+              <span className="loading loading-spinner"></span>
+            ) : (
+              "Sign Up"
+            )}
           </button>
         </div>
         <p className="text-center text-gray-600">
           Already have an account?{" "}
-          <a href="/login" className="text-blue-500">
+          <Link to="/login" className="text-blue-500">
             Login
-          </a>
+          </Link>
         </p>
       </form>
     </div>

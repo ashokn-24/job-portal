@@ -1,29 +1,21 @@
 import { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
+import { Link } from "react-router-dom";
+import useLogin from "../../hooks/useLogin";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleSubmit(e) {
-    const user = {
-      email: email,
-      password: password,
-    };
+  const { loading, login } = useLogin();
 
-    axios
-      .post("http://localhost:/au8000th/login", user)
-      .then(() => {
-        console.log("usesr login success");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    await login(email, password);
+
     console.log(email);
     console.log(password);
-  }
+  };
   return (
     <div className="flex justify-center items-center h-screen">
       <form
@@ -61,15 +53,20 @@ const Login = () => {
           <button
             type="submit"
             className="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none"
+            disabled={loading}
           >
-            Login
+            {loading ? (
+              <span className="loading loading-spinner"></span>
+            ) : (
+              "Login"
+            )}
           </button>
         </div>
         <p className="text-center text-gray-600">
           Dont have an account?{" "}
-          <a href="/signup" className="text-blue-500">
+          <Link to="/signup" className="text-blue-500">
             Sign up
-          </a>
+          </Link>
         </p>
       </form>
     </div>

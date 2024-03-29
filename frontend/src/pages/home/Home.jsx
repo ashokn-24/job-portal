@@ -1,3 +1,5 @@
+import LogoutButton from "../../components/login/LogoutButton";
+
 const Home = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -18,35 +20,30 @@ const Home = () => {
                 </a>
               </li>
               <li className="relative group">
-                <a href="#" className="text-white hover:text-gray-300">
-                  Profile
-                </a>
-                <ul className="absolute right-1 hidden bg-white shadow-lg rounded-lg mt-2 py-1 w-36 group-hover:block">
-                  <li>
-                    <a
-                      href="/login"
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
-                    >
-                      Login
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="/signup"
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
-                    >
-                      Signup
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
-                    >
-                      Logout
-                    </a>
-                  </li>
-                </ul>
+                <details className="dropdown dropdown-end">
+                  <summary className="m-1 btn">Profile</summary>
+                  <ul className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52 bg-slate-400">
+                    <li>
+                      <a
+                        href="/login"
+                        className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
+                      >
+                        Login
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="/signup"
+                        className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
+                      >
+                        Signup
+                      </a>
+                    </li>
+                    <li>
+                      <LogoutButton />
+                    </li>
+                  </ul>
+                </details>
               </li>
 
               {/* <li>
@@ -65,7 +62,6 @@ const Home = () => {
                   Signup
                 </a>
               </li> */}
-              
             </ul>
           </div>
         </div>
