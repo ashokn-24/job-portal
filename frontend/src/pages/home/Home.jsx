@@ -1,4 +1,5 @@
 import LogoutButton from "../../components/login/LogoutButton";
+import UserProfile from "../UserProfile";
 
 const Home = () => {
   return (
@@ -96,6 +97,10 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      <div>
+        <UserProfile />
+      </div>
 
       {/* Footer */}
       <footer className="bg-blue-500 py-8">
