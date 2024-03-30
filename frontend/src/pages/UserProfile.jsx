@@ -3,7 +3,7 @@ import useUserProfile from "../hooks/useUserProfile"; // Import the useUserProfi
 
 const UserProfile = () => {
   const { authUser } = useAuthContext(); // Assuming you have a context for authentication
-  const { loading, fetchUserProfile } = useUserProfile(); // Use the useUserProfile hook
+  const { loading, userProfile } = useUserProfile(); // Use the useUserProfile hook
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -22,10 +22,10 @@ const UserProfile = () => {
         ) : authUser && fetchUserProfile ? (
           <div>
             <p>
-              <strong>Name:</strong> {fetchUserProfile.name}
+              <strong>Name:</strong> {userProfile.name}
             </p>
             <p>
-              <strong>Email:</strong> {fetchUserProfile.email}
+              <strong>Email:</strong> {userProfile.email}
             </p>
             {/* Add more user information as needed */}
           </div>
