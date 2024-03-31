@@ -7,20 +7,23 @@ const useLogin = () => {
 
   const { setAuthUser } = useAuthContext();
 
-  const login = async ({ email, password }) => {
+  const login = async (email, password) => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/auth/logout", {
+      const res = await fetch("http://localhost:8000/auth/login", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
+        credentials: "include",
       });
 
-      const data = res.json();
+      console.log(res);
 
-      if (data.error) {
-        throw new Error(data.error);
+      const data = await res.json();
+      console.log(data);
+      if (data.message) {
+        throw new Error(data.message);
       }
 
       localStorage.setItem("user-info", JSON.stringify(data));

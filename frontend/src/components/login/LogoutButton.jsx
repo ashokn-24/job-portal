@@ -3,6 +3,7 @@ import { BiLogOut } from "react-icons/bi";
 
 const LogoutButton = () => {
   const { logout } = useLogout();
+
   return (
     <div className="mt-auto">
       <BiLogOut

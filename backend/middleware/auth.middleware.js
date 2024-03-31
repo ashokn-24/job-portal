@@ -21,4 +21,6 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 });
 
+// const verifyRole = (allowedRoles = (req, res, next) => {});
+
 export { protect };

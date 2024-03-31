@@ -5,29 +5,29 @@ import { useAuthContext } from "../context/AuthContext";
 const useUserProfile = () => {
   const [userProfile, setUserProfile] = useState({});
   const [loading, setLoading] = useState(false);
-  const { setAuthUser } = useAuthContext(); // Get the authenticated user from context
+  const { authUser } = useAuthContext(); // Get the authenticated user from context
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      if (!setAuthUser) return; // Make sure setAuthUser exists before fetching the profile
-  
+      if (!authUser) return; // Make sure authUser exists before fetching the profile
+
       setLoading(true);
-  
+
       try {
         const res = await fetch("http://localhost:8000/auth/profile", {
           method: "GET",
           headers: {
             "content-type": "application/json",
-            Authorization: `Bearer ${setAuthUser.token}`,
           },
+          credentials: "include",
         });
-  
+
         if (!res.ok) {
           throw new Error("Failed to fetch user data");
         }
-  
+
         const data = await res.json();
-        console.log(data, setAuthUser);
+        console.log(data, authUser);
         setUserProfile(data);
       } catch (error) {
         toast.error(error.message);

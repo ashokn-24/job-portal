@@ -12,9 +12,6 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await login(email, password);
-
-    console.log(email);
-    console.log(password);
   };
   return (
     <div className="flex justify-center items-center h-screen">

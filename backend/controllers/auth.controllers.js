@@ -123,11 +123,8 @@ export const updateUser = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  try {
-    res.cookie("jwt", "", { maxAge: 0 });
-    res.status(200).json({ message: "Logout successfully" });
-  } catch (error) {
-    console.log("error in logout controller", error);
-    res.status(500).json({ error: error.message });
-  }
+  res.clearCookie("jwt"); // Clear the JWT cookie
+
+  // Send a response indicating successful logout
+  res.status(200).json({ message: "Logout successfully" });
 };

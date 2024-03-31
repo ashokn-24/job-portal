@@ -16,13 +16,13 @@ const useSignup = () => {
     try {
       const res = await fetch("http://localhost:8000/auth/signup", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, confirmPassword }),
       });
 
       const data = await res.json();
-      if (data.error) {
-        throw new Error(data.error);
+      if (data.message) {
+        throw new Error(data.message);
       }
 
       localStorage.setItem("user-info", JSON.stringify(data));
@@ -53,7 +53,7 @@ function handleInputErrors({ email, password, confirmPassword }) {
     return false;
   }
 
-  if (password.length <= 6) {
+  if (password.length < 6) {
     toast.error("Password must be at least 6 characters");
     return false;
   }

@@ -19,7 +19,7 @@ const UserProfile = () => {
         <h1 className="text-3xl font-semibold mb-6">User Profile</h1>
         {loading ? (
           <p>Loading...</p>
-        ) : authUser && fetchUserProfile ? (
+        ) : authUser && userProfile ? (
           <div>
             <p>
               <strong>Name:</strong> {userProfile.name}
