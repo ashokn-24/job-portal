@@ -4,14 +4,19 @@ const jobSchema = mongoose.Schema(
   {
     jobTitle: {
       type: String,
+      required: true,
     },
     companyName: {
       type: String,
+      required: true,
     },
     duration: {
       type: String,
     },
-    description: {
+    jobDescription: {
+      type: String,
+    },
+    contacts: {
       type: String,
     },
   },

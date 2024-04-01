@@ -8,7 +8,9 @@ import {
   updateUser,
 } from "../controllers/auth.controllers.js";
 
-const router = express();
+const router = express.Router();
+
+// router.post("/postjob", postJob);
 
 router.post("/signup", signup);
 
