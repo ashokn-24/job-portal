@@ -11,9 +11,9 @@ const router = express.Router();
 
 router.post("/postjob", protect, verifyRole("employee"), postJob);
 
-router.get("/jobs", protect, getJobs);
+router.get("/jobs", protect, verifyRole("employee"), getJobs);
 
-router.get("/:id", protect, getJobById);
+router.get("/:id", protect, verifyRole("employee"), getJobById);
 
-router.delete("/:id", protect, deleteJob);
+router.delete("/:id", protect, verifyRole("employee"), deleteJob);
 export default router;

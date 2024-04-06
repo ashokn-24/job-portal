@@ -24,7 +24,12 @@ const protect = asyncHandler(async (req, res, next) => {
 
 const verifyRole = (role) => {
   return (req, res, next) => {
-    if (req.user.role === role) {
+    if (req.user.role !== role) {
+      res.status(403).json({
+        message: "You don't have permission to access this route",
+      });
+    } else {
+      next(); // Call next() if the role matches to proceed with the route handler
     }
   };
 };

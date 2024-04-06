@@ -1,9 +1,10 @@
 import LogoutButton from "../../components/login/LogoutButton";
 import UserProfile from "../UserProfile";
-
+// import Api from "../../api/Api";
 const Home = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
+      {/* <Api /> */}
       {/* Navigation */}
       <nav className="bg-blue-500 py-4">
         <div className="container mx-auto px-4">

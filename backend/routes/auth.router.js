@@ -1,5 +1,5 @@
 import express from "express";
-import { protect } from "../middleware/auth.middleware.js";
+import { protect, verifyRole } from "../middleware/auth.middleware.js";
 import {
   login,
   logout,
@@ -18,6 +18,9 @@ router.post("/login", login);
 
 router.post("/logout", logout);
 
-router.route("/profile").get(protect, getUser).put(protect, updateUser);
+router
+  .route("/profile")
+  .get(protect, verifyRole("basic"), getUser)
+  .put(protect, verifyRole("basic"), updateUser);
 
 export default router;

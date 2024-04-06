@@ -87,6 +87,7 @@ export const getUser = async (req, res) => {
         email: user.email,
         age: user.age,
         gender: user.gender,
+        role: user.role,
       });
     } else {
       res.status(404);

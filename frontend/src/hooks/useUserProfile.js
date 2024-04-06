@@ -5,7 +5,7 @@ import { useAuthContext } from "../context/AuthContext";
 const useUserProfile = () => {
   const [userProfile, setUserProfile] = useState({});
   const [loading, setLoading] = useState(false);
-  const { authUser } = useAuthContext(); // Get the authenticated user from context
+  const { authUser, setAuthUser } = useAuthContext(); // Get the authenticated user from context
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -27,7 +27,11 @@ const useUserProfile = () => {
         }
 
         const data = await res.json();
-        console.log(data, authUser);
+        console.log(data);
+        // Assuming the response data includes a 'role' property
+        setAuthUser({ ...data, role: data.role });
+        console.log(authUser);
+
         setUserProfile(data);
       } catch (error) {
         toast.error(error.message);
@@ -43,19 +47,3 @@ const useUserProfile = () => {
 };
 
 export default useUserProfile;
-
-// const useUserProfile = () => {
-//   const [userProfile, setUserProfile] = useState(null);
-
-//   useEffect(() => {
-//     // Fetch user profile from local storage
-
-//     const userProfileData = localStorage.getItem("user-info");
-
-//     if (userProfileData) {
-//       setUserProfile(JSON.parse(userProfileData));
-//     }
-//   }, []);
-
-//   return userProfile;
-// };
