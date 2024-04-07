@@ -7,22 +7,22 @@ const useLogin = () => {
 
   const { setAuthUser } = useAuthContext();
 
-  const login = async (email, password, role) => {
+  const login = async (email, password) => {
     setLoading(true);
 
     try {
       const res = await fetch("http://localhost:8000/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, role }),
+        body: JSON.stringify({ email, password }),
         credentials: "include",
       });
 
       // console.log(res.json);
 
       const data = await res.json();
-      console.log(data);
-      localStorage.setItem("user-info", JSON.stringify({ ...data, role }));
+      console.log(data.email);
+      localStorage.setItem("user-info", JSON.stringify({ data }));
       if (data.message) {
         throw new Error(data.message);
       }

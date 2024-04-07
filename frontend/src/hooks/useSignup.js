@@ -20,6 +20,7 @@ const useSignup = () => {
         body: JSON.stringify({ email, password, confirmPassword }),
       });
 
+      
       const data = await res.json();
       if (data.message) {
         throw new Error(data.message);

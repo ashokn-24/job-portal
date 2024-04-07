@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useAuthContext } from "../context/AuthContext";
+// import { useNavigate } from "react-router-dom";
 
 const useUserProfile = () => {
   const [userProfile, setUserProfile] = useState({});
@@ -19,6 +20,7 @@ const useUserProfile = () => {
           headers: {
             "content-type": "application/json",
           },
+
           credentials: "include",
         });
 
@@ -28,9 +30,13 @@ const useUserProfile = () => {
 
         const data = await res.json();
         console.log(data);
+        console.log(data.role);
         // Assuming the response data includes a 'role' property
         setAuthUser({ ...data, role: data.role });
         console.log(authUser);
+
+        // Store user role in localStorage
+        // localStorage.setItem("userRole", data.role);
 
         setUserProfile(data);
       } catch (error) {
@@ -43,7 +49,10 @@ const useUserProfile = () => {
     fetchUserProfile();
   }, []);
 
-  return { loading, userProfile };
+  // Retrieve user role from localStorage
+  const userRole = localStorage.getItem("userRole");
+
+  return { loading, userProfile, userRole };
 };
 
 export default useUserProfile;

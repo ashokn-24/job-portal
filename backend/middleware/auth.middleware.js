@@ -34,4 +34,16 @@ const verifyRole = (role) => {
   };
 };
 
+// const verifyRole = (...role) => {
+//   return (req, res, next) => {
+//     if (role.includes(req.user.role)) {
+//       res.status(403).json({
+//         message: "You don't have permission to access this route",
+//       });
+//     } else {
+//       next(); // Call next() if the role matches to proceed with the route handler
+//     }
+//   };
+// };
+
 export { protect, verifyRole };

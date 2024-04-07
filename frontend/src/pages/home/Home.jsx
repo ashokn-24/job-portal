@@ -6,6 +6,9 @@ const Home = () => {
     <div className="bg-gray-100 min-h-screen">
       {/* <Api /> */}
       {/* Navigation */}
+      <div>
+        <UserProfile />
+      </div>
       <nav className="bg-blue-500 py-4">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
@@ -24,11 +27,11 @@ const Home = () => {
               <li className="relative group">
                 <details className="dropdown dropdown-end">
                   <summary className="m-1 btn">Profile</summary>
-                  <ul className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52 bg-slate-400">
+                  <ul className="p-2 shadow menu dropdown-content z-[1] rounded-box w-52 bg-slate-400">
                     <li>
                       <a
                         href="/login"
-                        className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
+                        className="block px-4 py-2 hover:bg-gray-200 text-white"
                       >
                         Login
                       </a>
@@ -36,7 +39,7 @@ const Home = () => {
                     <li>
                       <a
                         href="/signup"
-                        className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
+                        className="block px-4 py-2  hover:bg-gray-200 text-white"
                       >
                         Signup
                       </a>
@@ -47,23 +50,6 @@ const Home = () => {
                   </ul>
                 </details>
               </li>
-
-              {/* <li>
-                <a
-                  href="/login"
-                  className="btn btn-primary text-white hover:text-gray-300"
-                >
-                  Login
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/signup"
-                  className="btn btn-primary text-white hover:text-gray-300"
-                >
-                  Signup
-                </a>
-              </li> */}
             </ul>
           </div>
         </div>
@@ -98,10 +84,10 @@ const Home = () => {
           </div>
         </div>
       </section>
-
+      {/* 
       <div>
         <UserProfile />
-      </div>
+      </div> */}
 
       {/* Footer */}
       <footer className="bg-blue-500 py-8">

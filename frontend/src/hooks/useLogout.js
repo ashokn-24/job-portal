@@ -8,16 +8,16 @@ const useLogout = () => {
 
   const logout = async () => {
     setLoading(true);
-    console.log("before logout");
+    // console.log("before logout");
     try {
-      console.log("in try block");
+      // console.log("in try block");
       const res = await fetch("http://localhost:8000/auth/logout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
 
-      console.log(res);
+      // console.log(res);
 
       const data = await res.json();
 
@@ -29,7 +29,7 @@ const useLogout = () => {
       if (data.message) {
         throw new Error(data.message);
       }
-      console.log("logout");
+      // console.log("logout");
 
       // Remove user info from local storage
 
