@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { User } from "../models/user.model.js";
-import genrateTokenAndSetCookie from "../utils/genrateToken.js";
+import generateTokensAndSetCookies from "../utils/generateTokens.js";
 
 export const signup = async (req, res) => {
   try {
@@ -13,15 +13,14 @@ export const signup = async (req, res) => {
     const userEmail = await User.findOne({ email });
 
     if (userEmail) {
-      return res.status(400).json({ error: "Email already exits" });
+      return res.status(400).json({ error: "Email already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10); // HASING PASSWORD
+    const hashedPassword = await bcrypt.hash(password, 10); // Hashing password
 
-    //https://avatar-placeholder.iran.liara.run/
-    const userProfilePic = "https://avatar.iran.liara.run/public/35";
+    const userProfilePic = "https://avatar.iran.liara.run/public/35"; // Placeholder profile picture
 
-    //CREATE NEW USER PROFILE
+    // Create new user profile
     const user = new User({
       email,
       password: hashedPassword,
@@ -34,8 +33,8 @@ export const signup = async (req, res) => {
     });
 
     if (user) {
-      genrateTokenAndSetCookie(user.id, res);
-      await user.save(); // SAVE USER PROFILE
+      generateTokensAndSetCookies(user.id, res);
+      await user.save(); // Save user profile
 
       res.status(201).json({
         id: user.id,
@@ -45,7 +44,7 @@ export const signup = async (req, res) => {
       res.status(400).json({ error: "Invalid user data" });
     }
   } catch (error) {
-    console.log("error in login controller", error);
+    console.log("Error in signup controller", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -63,15 +62,15 @@ export const login = async (req, res) => {
       return res.status(400).send({ message: "Invalid password" });
     }
 
-    genrateTokenAndSetCookie(user.id, res);
+    generateTokensAndSetCookies(user.id, res);
 
     res.status(201).json({
       id: user.id,
-      // username: user.username,
       email: user.email,
+      role: user.role,
     });
   } catch (error) {
-    console.log("error in signup controller", error);
+    console.log("Error in login controller", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -90,10 +89,10 @@ export const getUser = async (req, res) => {
         role: user.role,
       });
     } else {
-      res.status(404);
+      res.status(404).json({ error: "User not found" });
     }
   } catch (error) {
-    res.status(404).json(error);
+    res.status(404).json({ error: error.message });
   }
 };
 
@@ -108,7 +107,7 @@ export const updateUser = async (req, res) => {
       user.gender = req.body.gender;
 
       if (req.body.password) {
-        user.password = req.body.password;
+        user.password = await bcrypt.hash(req.body.password, 10); // Hash new password
       }
 
       const updatedUser = await user.save();
@@ -117,6 +116,8 @@ export const updateUser = async (req, res) => {
         _id: updatedUser._id,
         email: updatedUser.email,
       });
+    } else {
+      res.status(404).json({ error: "User not found" });
     }
   } catch (error) {
     res.status(404).json({ error: error.message });
@@ -124,7 +125,8 @@ export const updateUser = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  res.clearCookie("jwt"); // Clear the JWT cookie
+  res.clearCookie("accessToken"); // Clear the access token cookie
+  res.clearCookie("refreshToken"); // Clear the refresh token cookie
 
   // Send a response indicating successful logout
   res.status(200).json({ message: "Logout successfully" });

@@ -25,10 +25,10 @@ export const postJob = async (req, res) => {
         companyName: companyName,
       });
     } else {
-      res.status(400).json({ error: "cant post job" });
+      res.status(400).json({ error: "Can't post job" });
     }
   } catch (error) {
-    console.log("error in posJob controller", error);
+    console.log("Error in postJob controller", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -79,7 +79,7 @@ export const updateJob = async (req, res) => {
       res.status(404).json({ message: "Job not found" });
     }
   } catch (error) {
-    res.status(404).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -90,12 +90,12 @@ export const deleteJob = async (req, res) => {
     const job = await Job.findById(id);
 
     if (job) {
-      await Job.deleteOne(job);
+      await Job.deleteOne({ _id: id });
       res.status(200).json({ message: "Job deleted successfully" });
     } else {
       res.status(404).json({ message: "Job not found" });
     }
   } catch (error) {
-    res.status(404).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };

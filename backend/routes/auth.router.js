@@ -10,8 +10,6 @@ import {
 
 const router = express.Router();
 
-// router.post("/postjob", postJob);
-
 router.post("/signup", signup);
 
 router.post("/login", login);
@@ -20,7 +18,7 @@ router.post("/logout", logout);
 
 router
   .route("/profile")
-  .get(protect, verifyRole("basic"), getUser)
+  .get(protect, verifyRole("basic", "admin"), getUser)
   .put(protect, verifyRole("basic"), updateUser);
 
 export default router;

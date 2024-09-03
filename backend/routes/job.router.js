@@ -9,11 +9,12 @@ import { protect, verifyRole } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.post("/postjob", protect, verifyRole("employee"), postJob);
+router.post("/postjob", protect, verifyRole("employee", "admin"), postJob);
 
-router.get("/jobs", protect, verifyRole("employee"), getJobs);
+router.get("/jobs", protect, verifyRole("employee", "admin"), getJobs);
 
-router.get("/:id", protect, verifyRole("employee"), getJobById);
+router.get("/:id", protect, verifyRole("employee", "admin"), getJobById);
 
-router.delete("/:id", protect, verifyRole("employee"), deleteJob);
+router.delete("/:id", protect, verifyRole("employee", "admin"), deleteJob);
+
 export default router;
