@@ -11,10 +11,6 @@ const jobSchema = mongoose.Schema(
       ref: "Company",
       required: true,
     },
-    description: {
-      type: String,
-      required: true,
-    },
     duration: {
       type: String,
     },
@@ -24,16 +20,11 @@ const jobSchema = mongoose.Schema(
     type: {
       type: String,
       enum: ["full-time", "part-time", "internship", "contract"],
+      default: "full-time",
     },
-    contactEmail: {
-      type: String,
-      match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
-    },
-    phoneNumber: {
-      type: String,
-    },
-    address: {
-      type: String,
+    skills: {
+      type: Array,
+      default: ["HTML", "CSS", "JavaScript", "React JS"],
     },
   },
   { timestamps: true }

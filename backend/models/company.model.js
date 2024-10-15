@@ -11,14 +11,14 @@ const companySchema = mongoose.Schema(
     },
     website: {
       type: String,
-      match: /^https?:\/\/[\w\-\.]+(\.[\w\-]+)+[/#?]?.*$/, // Basic website URL validation
+      // match: /^https?:\/\/[\w\-\.]+(\.[\w\-]+)+[/#?]?.*$/, // Basic website URL validation
     },
     address: {
       type: String,
     },
     contactEmail: {
       type: String,
-      match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+      // match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
     },
     phoneNumber: {
       type: String,

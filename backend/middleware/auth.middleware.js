@@ -5,26 +5,23 @@ import { User } from "../models/user.model.js";
 const protect = asyncHandler(async (req, res, next) => {
   let token;
 
-  // Check for token in cookies
-  token = req.cookies.jwt;
+  token =
+    req.cookies.jwt ||
+    (req.headers.authorization && req.headers.authorization.startsWith("Bearer")
+      ? req.headers.authorization.split(" ")[1]
+      : null);
 
-  // Check for token in headers if not found in cookies
-  if (
-    !token &&
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    token = req.headers.authorization.split(" ")[1];
-  }
+  console.log("Token:", token);
 
   if (token) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_KEY);
+      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
       req.user = await User.findById(decoded.userId).select("-password");
-      console.log(req.user);
+      console.log("Authenticated User:", req.user);
       next();
     } catch (error) {
+      console.log("Error verifying token:", error);
       res.status(401).json({ error: "Not authorized, token invalid" });
     }
   } else {
@@ -39,7 +36,7 @@ const verifyRole = (...roles) => {
         message: "You don't have permission to access this route",
       });
     } else {
-      next(); // Call next() if the role matches to proceed with the route handler
+      next();
     }
   };
 };

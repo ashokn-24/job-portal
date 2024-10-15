@@ -21,7 +21,7 @@ router.post("/refresh", refresh);
 
 router
   .route("/profile")
-  .get(protect, verifyRole("basic", "admin"), getUser)
+  .get(protect, verifyRole("basic", "employee", "admin"), getUser)
   .put(protect, verifyRole("basic"), updateUser);
 
 export default router;

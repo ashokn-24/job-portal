@@ -1,11 +1,10 @@
 import bcrypt from "bcryptjs";
 import { User } from "../models/user.model.js";
 import generateTokensAndSetCookies from "../utils/genrateToken.js";
-import { v4 as uuidv4 } from "uuid";
 
 export const signup = async (req, res) => {
   try {
-    const { email, password, confirmPassword } = req.body;
+    const { name, email, password, gender, confirmPassword } = req.body;
 
     if (password !== confirmPassword) {
       return res.status(400).json({ error: "Passwords do not match" });
@@ -19,28 +18,23 @@ export const signup = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10); // Hashing password
 
-    const userProfilePic = "https://avatar.iran.liara.run/public/35"; // Placeholder profile picture
+    const userProfilePic = `https://avatar.iran.liara.run/${
+      gender === "male" ? "boy" : "girl"
+    }`;
 
     // Create new user profile
     const user = new User({
+      name,
       email,
-      password: hashedPassword,
-    });
-
-    console.log({
-      email,
-      password: hashedPassword,
       profilePic: userProfilePic,
+      password: hashedPassword,
     });
 
     if (user) {
       generateTokensAndSetCookies(user.id, res);
-      await user.save(); // Save user profile
+      await user.save();
 
-      res.status(201).json({
-        id: user.id,
-        email: user.email,
-      });
+      res.status(201).json(user);
     } else {
       res.status(400).json({ error: "Invalid user data" });
     }
