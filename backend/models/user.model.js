@@ -1,18 +1,22 @@
 import mongoose from "mongoose";
+import { v4 as uuidv4 } from "uuid";
 
 const userSchema = mongoose.Schema(
   {
+    id: {
+      type: String,
+      required: true,
+      default: uuidv4,
+    },
     fullName: {
       type: String,
-      // required: true,
-    },
-    username: {
-      type: String,
+      required: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
+      match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
     },
     password: {
       type: String,
@@ -24,7 +28,6 @@ const userSchema = mongoose.Schema(
     },
     gender: {
       type: String,
-      // required: true,
       enum: ["male", "female"],
     },
     profilePic: {
@@ -36,8 +39,15 @@ const userSchema = mongoose.Schema(
       enum: ["admin", "basic", "employee"],
       default: "basic",
     },
+    company: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
+      required: function () {
+        return this.role === "employee";
+      },
+    },
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
 export const User = mongoose.model("User", userSchema);

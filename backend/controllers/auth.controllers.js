@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { User } from "../models/user.model.js";
-import generateTokensAndSetCookies from "../utils/generateTokens.js";
+import generateTokensAndSetCookies from "../utils/genrateToken.js";
+import { v4 as uuidv4 } from "uuid";
 
 export const signup = async (req, res) => {
   try {
@@ -72,6 +73,29 @@ export const login = async (req, res) => {
   } catch (error) {
     console.log("Error in login controller", error);
     res.status(500).json({ error: error.message });
+  }
+};
+
+export const refresh = async (req, res) => {
+  const { refreshToken } = req.cookies;
+
+  if (!refreshToken) {
+    return res.status(401).json({ error: "Refresh token not provided" });
+  }
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(401).json({ error: "Invalid refresh token" });
+    }
+
+    generateTokensAndSetCookies(user.id, res);
+
+    res.status(200).json({ message: "Token refreshed successfully" });
+  } catch (error) {
+    console.log("Error in refreshToken controller", error);
+    res.status(401).json({ error: "Invalid or expired refresh token" });
   }
 };
 

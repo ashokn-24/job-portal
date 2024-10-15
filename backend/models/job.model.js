@@ -6,7 +6,12 @@ const jobSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    companyName: {
+    company: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
+      required: true,
+    },
+    description: {
       type: String,
       required: true,
     },
@@ -16,11 +21,22 @@ const jobSchema = mongoose.Schema(
     jobDescription: {
       type: String,
     },
-    contacts: {
+    type: {
+      type: String,
+      enum: ["full-time", "part-time", "internship", "contract"],
+    },
+    contactEmail: {
+      type: String,
+      match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+    },
+    phoneNumber: {
+      type: String,
+    },
+    address: {
       type: String,
     },
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
 export const Job = mongoose.model("Job", jobSchema);

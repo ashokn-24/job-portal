@@ -11,7 +11,7 @@ const Navbar = () => {
     <nav className="bg-gray-200 p-4">
       <div className="container mx-auto flex justify-between items-center">
         <a href="#" className="text-black text-lg font-bold">
-          Brand
+          Job Fution!{" "}
         </a>
         <div className="block lg:hidden">
           <button
