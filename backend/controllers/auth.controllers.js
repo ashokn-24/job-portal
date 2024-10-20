@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { User } from "../models/user.model.js";
 import generateTokensAndSetCookies from "../utils/genrateToken.js";
+import jwt from "jsonwebtoken";
 
 export const signup = async (req, res) => {
   try {
@@ -18,7 +19,7 @@ export const signup = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10); // Hashing password
 
-    const userProfilePic = `https://avatar.iran.liara.run/${
+    const userProfilePic = `https://avatar.iran.liara.run/public/${
       gender === "male" ? "boy" : "girl"
     }`;
 
@@ -57,12 +58,14 @@ export const login = async (req, res) => {
       return res.status(400).send({ message: "Invalid password" });
     }
 
-    generateTokensAndSetCookies(user.id, res);
+    const { accessToken, refreshToken } = await generateTokensAndSetCookies(
+      user.id,
+      res
+    );
 
     res.status(201).json({
-      id: user.id,
-      email: user.email,
-      role: user.role,
+      accessToken,
+      user,
     });
   } catch (error) {
     console.log("Error in login controller", error);
@@ -76,17 +79,18 @@ export const refresh = async (req, res) => {
   if (!refreshToken) {
     return res.status(401).json({ error: "Refresh token not provided" });
   }
+
   try {
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-    const user = await User.findById(decoded.id);
+    const user = await User.findById(decoded.userId);
 
     if (!user) {
       return res.status(401).json({ error: "Invalid refresh token" });
     }
 
-    generateTokensAndSetCookies(user.id, res);
+    const { accessToken } = await generateTokensAndSetCookies(user.id, res);
 
-    res.status(200).json({ message: "Token refreshed successfully" });
+    res.status(200).json({ accessToken, user });
   } catch (error) {
     console.log("Error in refreshToken controller", error);
     res.status(401).json({ error: "Invalid or expired refresh token" });
@@ -143,9 +147,7 @@ export const updateUser = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  res.clearCookie("accessToken"); // Clear the access token cookie
-  res.clearCookie("refreshToken"); // Clear the refresh token cookie
+  res.clearCookie("refreshToken");
 
-  // Send a response indicating successful logout
   res.status(200).json({ message: "Logout successfully" });
 };

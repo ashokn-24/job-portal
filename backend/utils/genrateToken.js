@@ -1,22 +1,19 @@
 import jwt from "jsonwebtoken";
 
-const generateTokensAndSetCookies = (userId, res) => {
-  const payload = { userId }; // Construct payload object
+const generateTokensAndSetCookies = async (userId, res) => {
+  const payload = { userId };
 
-  const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+  const accessToken = await jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "15m",
   });
 
-  const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: "7d",
-  });
-
-  res.cookie("accessToken", accessToken, {
-    expiresIn: "1h",
-    httpOnly: true,
-    sameSite: true,
-    secure: true,
-  });
+  const refreshToken = await jwt.sign(
+    payload,
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: "7d",
+    }
+  );
 
   // Set refresh token as a cookie
   res.cookie("refreshToken", refreshToken, {
@@ -25,6 +22,8 @@ const generateTokensAndSetCookies = (userId, res) => {
     sameSite: true,
     secure: true,
   });
+
+  return { accessToken, refreshToken };
 };
 
 export default generateTokensAndSetCookies;

@@ -4,6 +4,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      backgroundImage: {
+        "hero-banner": "url('/banners/hero.jpg')",
+      },
       colors: {
         darkBlue: "#615EFC",
         mildBlue: "#7E8EF1",
