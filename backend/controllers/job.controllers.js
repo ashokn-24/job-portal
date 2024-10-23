@@ -1,15 +1,13 @@
+import mongoose from "mongoose";
 import { Company } from "../models/company.model.js";
 import { Job } from "../models/job.model.js";
 import { User } from "../models/user.model.js";
+import bcrypt from "bcryptjs";
 
 export const registerAsEmployee = async (req, res) => {
   try {
     const {
-      name,
       email,
-      password,
-      confirmPassword,
-      gender,
       companyName,
       companyDescription,
       companyWebsite,
@@ -18,49 +16,72 @@ export const registerAsEmployee = async (req, res) => {
       companyPhoneNumber,
     } = req.body;
 
-    if (password !== confirmPassword) {
-      return res.status(400).json({ error: "Passwords do not match" });
+    if (!companyName) {
+      return res.status(400).json({ error: "Company name is required." });
     }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "Email already exists" });
-    }
+      if (existingUser.role === "employee") {
+        return res
+          .status(400)
+          .json({ error: "User is already registered as an employee." });
+      }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+      let company = await Company.findOne({ name: companyName });
+      if (!company) {
+        company = new Company({
+          name: companyName,
+          description: companyDescription,
+          website: companyWebsite,
+          address: companyAddress,
+          contactEmail: companyContactEmail,
+          phoneNumber: companyPhoneNumber,
+        });
+        await company.save();
+      }
 
-    let company = await Company.findOne({ name: companyName });
+      existingUser.role = "employee";
+      existingUser.company = company._id;
 
-    if (!company) {
-      company = new Company({
-        name: companyName,
-        description: companyDescription,
-        website: companyWebsite,
-        address: companyAddress,
-        contactEmail: companyContactEmail,
-        phoneNumber: companyPhoneNumber,
+      await existingUser.save();
+      generateTokensAndSetCookies(existingUser.id, res);
+
+      return res.status(200).json({
+        message: "User updated to employee successfully",
+        user: existingUser,
       });
-      await company.save();
+    } else {
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+      let company = await Company.findOne({ name: companyName });
+      if (!company) {
+        company = new Company({
+          name: companyName,
+          description: companyDescription,
+          website: companyWebsite,
+          address: companyAddress,
+          contactEmail: companyContactEmail,
+          phoneNumber: companyPhoneNumber,
+        });
+        await company.save();
+      }
+
+      const user = new User({
+        fullName: req.body.name,
+        email,
+        password: hashedPassword,
+        role: "employee",
+        company: company._id,
+      });
+
+      await user.save();
+      generateTokensAndSetCookies(user.id, res);
+
+      res
+        .status(201)
+        .json({ message: "Employee registered successfully", user });
     }
-
-    const userProfilePic = `https://avatar.iran.liara.run/${
-      gender === "male" ? "boy" : "girl"
-    }`;
-
-    const user = new User({
-      fullName: name,
-      email,
-      password: hashedPassword,
-      profilePic: userProfilePic,
-      role: "employee",
-      company: company._id,
-    });
-
-    await user.save();
-
-    generateTokensAndSetCookies(user.id, res);
-
-    res.status(201).json({ message: "Employee registered successfully", user });
   } catch (error) {
     console.log("Error in registerAsEmployee controller", error);
     res.status(500).json({ error: error.message });
@@ -93,18 +114,40 @@ export const getEmpProfile = async (req, res) => {
 
 export const postJob = async (req, res) => {
   try {
-    const { jobTitle, jobDescription, jobType, company } = req.body;
+    const {
+      jobTitle,
+      jobDescription,
+      jobType,
+      company,
+      workType,
+      location,
+      industry,
+      experienceLevel,
+      salaryPeriod,
+      salaryAmount,
+      unStipend,
+      skills,
+    } = req.body;
+
+    const salaryRange = unStipend
+      ? "UnStipend"
+      : `${salaryAmount} ${salaryPeriod}`;
 
     const job = new Job({
       jobTitle,
       jobDescription,
-      type: jobType,
-      company,
+      jobType,
+      industry,
+      experienceLevel,
+      skills,
+      salaryRange,
+      workType,
+      location,
+      company: new mongoose.Types.ObjectId(company),
     });
 
     if (job) {
       await job.save();
-
       res.status(201).json(job);
     } else {
       res.status(400).json({ error: "Can't post job" });

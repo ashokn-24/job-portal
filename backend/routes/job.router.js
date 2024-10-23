@@ -12,17 +12,17 @@ import { protect, verifyRole } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.post("/register,", registerAsEmployee);
+router.post("/register", registerAsEmployee);
 
 router.get("/profile", protect, verifyRole("employee", "admin"), getEmpProfile);
 
 router.post("/postjob", protect, verifyRole("employee", "admin"), postJob);
 
-router.get("/jobs", protect, verifyRole("basic", "employee", "admin"), getJobs);
+router.get("/jobs", getJobs);
 
 router
   .route("/job/:id")
-  .get(protect, verifyRole("employee", "admin"), getJobById)
+  .get(getJobById)
   .put(protect, verifyRole("employee"), updateJobById)
   .delete(protect, verifyRole("employee", "admin"), deleteJob);
 

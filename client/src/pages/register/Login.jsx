@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useUser } from "../../context/UserContext";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const { loginUser } = useUser();
@@ -39,7 +40,7 @@ const Login = () => {
               value={data.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              className="w-full px-4 py-2 text-white border border-gray-200 rounded-md focus:outline-none"
+              className="w-full px-4 py-2 text-gray-500 border border-gray-200 rounded-md focus:outline-none"
             />
           </div>
           <div>
@@ -63,7 +64,7 @@ const Login = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-darkBlue text-white py-2 rounded-md hover:bg-mildBlue transition duration-200"
+            className="w-full bg-darkBlue text-gray-500 py-2 rounded-md hover:bg-mildBlue transition duration-200"
           >
             Sign In
           </button>
@@ -72,9 +73,9 @@ const Login = () => {
         <div className="text-center text-gray-500 mt-4">
           <p>
             Don't have an account yet?{" "}
-            <a href="#" className="text-darkBlue">
+            <Link to={"/signup"} className="text-darkBlue">
               Sign Up
-            </a>
+            </Link>
           </p>
         </div>
       </div>

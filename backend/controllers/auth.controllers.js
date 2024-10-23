@@ -32,10 +32,13 @@ export const signup = async (req, res) => {
     });
 
     if (user) {
-      generateTokensAndSetCookies(user.id, res);
+      const { accessToken } = await generateTokensAndSetCookies(user.id, res);
       await user.save();
 
-      res.status(201).json(user);
+      res.status(201).json({
+        accessToken,
+        user,
+      });
     } else {
       res.status(400).json({ error: "Invalid user data" });
     }

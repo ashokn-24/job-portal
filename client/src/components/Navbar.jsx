@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useUser } from "../context/UserContext";
+import { Popover } from "antd";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logoutUser } = useUser();
@@ -9,9 +10,25 @@ const Navbar = () => {
     setIsOpen(!isOpen);
   };
 
+  const data = (
+    <div className="flex flex-col gap-2">
+      <div className="font-semibold border-b">{user?.name}</div>
+      <div className="font-medium border-b">View Profile</div>
+      <div className="font-medium border-b">Applications Status</div>
+      <div className="font-medium border-b">Update Resume</div>
+
+      <button
+        onClick={logoutUser}
+        className="bg-mildBlue text-white text-xs px-2 py-1 rounded-lg"
+      >
+        Logout
+      </button>
+    </div>
+  );
+
   return (
     <nav className="bg-white p-4 shadow-md font-sans ">
-      <div className="container mx-auto flex justify-between items-center">
+      <div className="container mx-auto flex justify-between items-center px-3">
         <a href="#" className="text-mildBlue text-lg font-bold">
           Job Fution!{" "}
         </a>
@@ -52,6 +69,16 @@ const Navbar = () => {
                 Jobs
               </Link>
             </li>
+            {user?.role === "employee" && (
+              <li>
+                <Link
+                  to={"/employee/dashboard"}
+                  className="block text-gray-500 py-2 px-4"
+                >
+                  Dashboard
+                </Link>
+              </li>
+            )}
             <li>
               <a href="#" className="block text-gray-500 py-2 px-4">
                 About
@@ -72,24 +99,29 @@ const Navbar = () => {
         <div className="">
           {user ? (
             <div className="flex gap-2">
-              <img src={user.profilePic} width={50} />
-              <button
-                onClick={logoutUser}
-                className="bg-mildBlue text-white px-5 py-2 rounded-lg"
-              >
-                Logout
-              </button>
+              <Popover content={data} trigger="click" placement="bottomLeft">
+                <img src={user.profilePic} width={50} />
+              </Popover>
             </div>
           ) : (
             <div className="flex gap-2">
               <Link
                 to={"/login"}
-                className="bg-mildBlue text-white px-5 py-2 rounded-lg"
+                className="bg-mildBlue text-white px-3 py-2 text-sm rounded-lg"
               >
                 Login
               </Link>
-              <Link className="bg-mildBlue text-white px-5 py-2 rounded-lg">
-                Register
+              <Link
+                to={"/signup"}
+                className="bg-mildBlue text-white px-3 py-2 text-sm rounded-lg"
+              >
+                Sign Up
+              </Link>
+              <Link
+                to={"/employee/signup"}
+                className="bg-mildBlue text-white px-3 py-2 text-sm rounded-lg"
+              >
+                Register as Employee
               </Link>
             </div>
           )}

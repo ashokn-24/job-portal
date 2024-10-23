@@ -23,7 +23,6 @@ export const UserProvider = ({ children }) => {
         setAuthHeader(res.data.accessToken);
       } catch (error) {
         console.error("Error refreshing token:", error);
-        navigate("/login");
       } finally {
         setLoading(false);
       }
@@ -47,15 +46,45 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  const signupUser = async (payload) => {
+    try {
+      const res = await api.post("/auth/signup", payload);
+      setUser(res.data.user);
+      setToken(res.data.accessToken);
+      setAuthHeader(res.data.accessToken);
+
+      if (res.status === 201) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const logoutUser = async () => {
     try {
       await api.post("/auth/logout");
       clearAuthHeader();
       setUser(null);
       setToken(null);
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.log("Error logging out:", error);
+    }
+  };
+
+  const employeeSignup = async (payload) => {
+    try {
+      const res = await api.post("/employee/register", payload);
+      setUser(res.data.user);
+      setToken(res.data.accessToken);
+      setAuthHeader(res.data.accessToken);
+
+      if (res.status === 201) {
+        navigate("/");
+      }
+    } catch (error) {
+      console.log(error.message);
     }
   };
 
@@ -71,6 +100,8 @@ export const UserProvider = ({ children }) => {
         token,
         setToken,
         loading,
+        signupUser,
+        employeeSignup,
         loginUser,
         logoutUser,
       }}
