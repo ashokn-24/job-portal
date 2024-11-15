@@ -1,53 +1,95 @@
 /* eslint-disable react/prop-types */
+import { Select } from "antd";
 import { useState } from "react";
+import {
+  SearchOutlined,
+  EnvironmentOutlined,
+  GiftOutlined,
+  DollarOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 
 const Filter = ({ jobs, onFilter }) => {
-  const [jobType, setJobType] = useState("");
-  const [skills, setSkills] = useState([]);
-  const [company, setCompany] = useState("");
+  const [filterData, setFilterData] = useState({
+    jobType: "",
+    skills: [],
+  });
 
   const handleFilterChange = () => {
-    // Call the filtering function passed as a prop
     const filteredJobs = jobs?.filter((job) => {
       return (
-        (jobType === "" || job?.jobType === jobType) &&
-        (skills.length === 0 ||
-          skills.every((skill) => job?.skills.includes(skill))) &&
-        (company === "" || job?.company === company)
+        (filterData.jobType === "" || job?.jobType === filterData.jobType) &&
+        (filterData.skills.length === 0 ||
+          filterData.skills.every((skill) => job?.skills.includes(skill)))
       );
     });
+    console.log(filteredJobs); // Log the filtered jobs
     onFilter(filteredJobs);
   };
 
   return (
-    <div>
-      <h3>Filter Jobs</h3>
+    <div className=" border-gray-300 flex items-center rounded-md p-2 space-x-2 justify-center">
+      <div className="flex items-center space-x-2 ">
+        <SearchOutlined className="text-mildBlue" />
+        <Select
+          mode="tags"
+          size="large"
+          value={filterData.skills}
+          placeholder="Skills"
+          onChange={(value) =>
+            setFilterData((prev) => ({ ...prev, skills: value }))
+          }
+          className="w-40 border-0 border-white"
+        />
+      </div>
 
-      {/* Job Type Filter */}
-      <label>Job Type:</label>
-      <select value={jobType} onChange={(e) => setJobType(e.target.value)}>
-        <option value="">All</option>
-        <option value="full-time">Full-time</option>
-        <option value="part-time">Part-time</option>
-      </select>
+      <div className="flex items-center space-x-2">
+        <EnvironmentOutlined className="text-mildBlue" />
+        <Select
+          placeholder="Location"
+          size="large"
+          onChange={(value) =>
+            setFilterData((prev) => ({ ...prev, location: value }))
+          }
+          className="w-40"
+        />
+      </div>
 
-      {/* Skills Filter */}
-      <label>Skills:</label>
-      <input
-        type="text"
-        placeholder="Enter skills (comma separated)"
-        onChange={(e) => setSkills(e.target.value.split(","))}
-      />
+      <div className="flex items-center space-x-2">
+        <GiftOutlined className="text-mildBlue" />
+        <Select
+          value={filterData.jobType}
+          size="large"
+          onChange={(value) =>
+            setFilterData((prev) => ({ ...prev, jobType: value }))
+          }
+          placeholder="Job Type"
+          options={[
+            { label: "Full-time", value: "Full-time" },
+            { label: "Part-time", value: "Part-time" },
+            { label: "Internship", value: "Internship" },
+          ]}
+          className="w-40"
+        />
+      </div>
 
-      {/* Company Filter */}
-      <label>Company:</label>
-      <select value={company} onChange={(e) => setCompany(e.target.value)}>
-        <option value="">All</option>
-        <option value="670e2eff32313cf9ace4102a">Company A</option>
-        <option value="670e2eff32313cf9ace4102b">Company B</option>
-      </select>
+      {/* <div className="flex items-center space-x-2">
+        <DollarOutlined className="text-mildBlue" />
+        <Select
+          placeholder="Salary Range"
+          onChange={(value) =>
+            setFilterData((prev) => ({ ...prev, salaryRange: value }))
+          }
+          className="w-40"
+        />
+      </div> */}
 
-      <button onClick={handleFilterChange}>Apply Filters</button>
+      <button
+        onClick={handleFilterChange}
+        className="bg-darkBlue p-2 px-4 rounded-md text-white font-medium"
+      >
+        Find Job
+      </button>
     </div>
   );
 };

@@ -7,6 +7,8 @@ import Signup from "./pages/register/Signup";
 import EmployeeSignUpForm from "./pages/register/EmpSignup/EmployeeSignUpForm";
 import JobInfo from "./pages/jobs/JobInfo";
 import Dashboard from "./pages/dashboard/Dashboard";
+import Applications from "./pages/user/Applications";
+import UserProfile from "./pages/user/UserProfile";
 
 const App = () => {
   return (
@@ -17,9 +19,11 @@ const App = () => {
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/jobs/:id" element={<JobInfo />} />
           <Route path={"/login"} element={<Login />} />
+          <Route path={"/profile"} element={<UserProfile />} />
           <Route path={"/signup"} element={<Signup />} />
+          <Route path={"/applications"} element={<Applications />} />
           <Route path={"/employee/signup"} element={<EmployeeSignUpForm />} />
-          <Route path={"/employee/dashboard"} element={<Dashboard />} />
+          <Route path={"/dashboard"} element={<Dashboard />} />
         </Routes>
       </JobProvider>
     </>

@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import api, { clearAuthHeader, setAuthHeader } from "../utils/axiosConfig";
 import { useNavigate } from "react-router-dom";
+import { Spin } from "antd";
 
 const UserContext = createContext();
 
@@ -89,7 +90,11 @@ export const UserProvider = ({ children }) => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin size="large" />
+      </div>
+    );
   }
 
   return (

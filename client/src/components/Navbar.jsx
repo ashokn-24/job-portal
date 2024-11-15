@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import { Popover } from "antd";
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logoutUser } = useUser();
@@ -10,13 +11,18 @@ const Navbar = () => {
     setIsOpen(!isOpen);
   };
 
-  const data = (
+  const userPopoverContent = (
     <div className="flex flex-col gap-2">
       <div className="font-semibold border-b">{user?.name}</div>
-      <div className="font-medium border-b">View Profile</div>
-      <div className="font-medium border-b">Applications Status</div>
-      <div className="font-medium border-b">Update Resume</div>
-
+      <Link to={"/profile"} className="font-medium border-b">
+        View Profile
+      </Link>
+      <Link to={"/applications"} className="font-medium border-b">
+        My Applications
+      </Link>
+      <Link to={"/update-resume"} className="font-medium border-b">
+        Update Resume
+      </Link>
       <button
         onClick={logoutUser}
         className="bg-mildBlue text-white text-xs px-2 py-1 rounded-lg"
@@ -26,13 +32,29 @@ const Navbar = () => {
     </div>
   );
 
+  const employerPopoverContent = (
+    <div className="flex flex-col gap-2">
+      <Link to={"/login"} className="font-medium">
+        Login
+      </Link>
+      <Link to={"/register"} className="font-medium">
+        Register
+      </Link>
+      <Link to={"/enquiry"} className="font-medium">
+        Enquiry
+      </Link>
+    </div>
+  );
+
   return (
-    <nav className="bg-white p-4 shadow-md font-sans ">
-      <div className="container mx-auto flex justify-between items-center px-3">
-        <a href="#" className="text-mildBlue text-lg font-bold">
-          Job Fution!{" "}
-        </a>
-        <div className="block lg:hidden">
+    <nav className="bg-white px-4 py-2 font-sans">
+      <div className="container mx-auto flex justify-between items-center">
+        <Link to="/" className="text-mildBlue text-lg font-bold">
+          Job Function!
+        </Link>
+
+        {/* Mobile Burger Icon */}
+        <div className="lg:hidden">
           <button
             onClick={toggleMenu}
             className="text-mildBlue focus:outline-none"
@@ -42,7 +64,6 @@ const Navbar = () => {
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
             >
               <path
                 strokeLinecap="round"
@@ -53,77 +74,90 @@ const Navbar = () => {
             </svg>
           </button>
         </div>
+
+        {/* Navbar Links */}
         <div
-          className={`w-full lg:flex lg:items-center lg:w-auto text-lightGray ${
+          className={`${
             isOpen ? "block" : "hidden"
-          }`}
+          } lg:flex lg:items-center lg:static absolute top-14 left-0 w-full lg:w-auto bg-white lg:bg-transparent z-20 lg:z-auto transition-all duration-300 ease-in-out`}
         >
-          <ul className="lg:flex lg:space-x-4">
+          <ul className="flex flex-col lg:flex-row lg:space-x-6 lg:py-0 py-6 text-gray-600 text-center lg:text-left">
             <li>
-              <a href="#" className="block text-gray-500 py-2 px-4">
+              <Link to="/" className="block py-2 px-4 hover:text-mildBlue">
                 Home
-              </a>
+              </Link>
             </li>
             <li>
-              <Link to={"/jobs"} className="block text-gray-500 py-2 px-4">
+              <Link to="/jobs" className="block py-2 px-4 hover:text-mildBlue">
                 Jobs
               </Link>
             </li>
             {user?.role === "employee" && (
               <li>
                 <Link
-                  to={"/employee/dashboard"}
-                  className="block text-gray-500 py-2 px-4"
+                  to="/dashboard"
+                  className="block py-2 px-4 hover:text-mildBlue"
                 >
                   Dashboard
                 </Link>
               </li>
             )}
             <li>
-              <a href="#" className="block text-gray-500 py-2 px-4">
+              <Link to="/about" className="block py-2 px-4 hover:text-mildBlue">
                 About
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#" className="block text-gray-500 py-2 px-4">
+              <Link
+                to="/services"
+                className="block py-2 px-4 hover:text-mildBlue"
+              >
                 Services
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="#" className="block text-gray-500 py-2 px-4">
+              <Link
+                to="/contact"
+                className="block py-2 px-4 hover:text-mildBlue"
+              >
                 Contact
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
-        <div className="">
+
+        {/* User Authentication Section */}
+        <div className="hidden lg:flex items-center gap-4">
           {user ? (
-            <div className="flex gap-2">
-              <Popover content={data} trigger="click" placement="bottomLeft">
-                <img src={user.profilePic} width={50} />
-              </Popover>
-            </div>
+            <Popover
+              content={userPopoverContent}
+              trigger="click"
+              placement="bottomRight"
+            >
+              <img
+                src={user.profilePic}
+                alt="Profile"
+                className="rounded-full w-10 h-10 cursor-pointer"
+              />
+            </Popover>
           ) : (
-            <div className="flex gap-2">
+            <>
               <Link
-                to={"/login"}
-                className="bg-mildBlue text-white px-3 py-2 text-sm rounded-lg"
+                to="/login"
+                className="bg-mildBlue text-white px-4 py-2 rounded-lg text-sm"
               >
-                Login
+                Login/Register
               </Link>
-              <Link
-                to={"/signup"}
-                className="bg-mildBlue text-white px-3 py-2 text-sm rounded-lg"
+              <Popover
+                content={employerPopoverContent}
+                trigger="click"
+                placement="bottomRight"
               >
-                Sign Up
-              </Link>
-              <Link
-                to={"/employee/signup"}
-                className="bg-mildBlue text-white px-3 py-2 text-sm rounded-lg"
-              >
-                Register as Employee
-              </Link>
-            </div>
+                <span className="text-darkBlue cursor-pointer">
+                  For Recruiter ▾
+                </span>
+              </Popover>
+            </>
           )}
         </div>
       </div>

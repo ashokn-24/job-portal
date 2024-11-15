@@ -2,69 +2,71 @@ import contactImg from "../../assets/images/contact.svg";
 
 const Contact = () => {
   return (
-    <div>
-      <h1 className="text-title-desktop text-center md:text-title-mobile font-serif text-darkBlue">
+    <div className="bg-gray-50 py-16 px-8 lg:px-16">
+      <h1 className="text-4xl font-bold text-center text-darkBlue mb-12">
         Contact Us
       </h1>
-      <div className="grid grid-cols-2">
-        <div className="bg- p-8">
-          <form className="mt-4">
-            <div className="mb-4">
+      <div className="grid lg:grid-cols-2 gap-10 items-center">
+        {/* Contact Form Section */}
+        <div className="bg-white p-8 rounded-lg shadow-lg">
+          <form className="space-y-6">
+            <div>
               <label
-                className="block text-secondary-desktop md:text-secondary-mobile font-sans text-darkBlue"
+                className="block text-lg font-semibold text-darkBlue"
                 htmlFor="name"
               >
                 Name
               </label>
               <input
-                className="w-full p-2 border border-subgray rounded"
+                className="w-full p-3 mt-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
                 type="text"
                 id="name"
                 name="name"
                 required
               />
             </div>
-            <div className="mb-4">
+            <div>
               <label
-                className="block text-secondary-desktop md:text-secondary-mobile font-sans text-darkBlue"
+                className="block text-lg font-semibold text-darkBlue"
                 htmlFor="email"
               >
                 Email
               </label>
               <input
-                className="w-full p-2 border border-subgray rounded"
+                className="w-full p-3 mt-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
                 type="email"
                 id="email"
                 name="email"
                 required
               />
             </div>
-            <div className="mb-4">
+            <div>
               <label
-                className="block text-secondary-desktop md:text-secondary-mobile font-sans text-darkBlue"
+                className="block text-lg font-semibold text-darkBlue"
                 htmlFor="message"
               >
                 Message
               </label>
               <textarea
-                className="w-full p-2 border border-subgray rounded"
+                className="w-full p-3 mt-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
                 id="message"
                 name="message"
-                rows="4"
+                rows="5"
                 required
               ></textarea>
             </div>
             <button
-              className="bg-darkBlue text-lightGray p-2 rounded"
+              className="w-full py-3 bg-blue-600 text-white font-bold rounded hover:bg-blue-700 transition-all duration-200"
               type="submit"
             >
-              Send
+              Send Message
             </button>
           </form>
         </div>
 
-        <div className="flex justify-center items-center">
-          <img src={contactImg} alt="" width={400} />
+        {/* Contact Image Section */}
+        <div className="flex justify-center lg:justify-end">
+          <img src={contactImg} alt="Contact Us" className="w-full max-w-md" />
         </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { Button, Flex, Layout, Menu } from "antd";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
@@ -120,112 +121,6 @@ const Dashboard = () => {
         </Layout>
       </Flex>
     </>
-
-    // <div className="min-h-screen bg-gray-100 p-6">
-    //   <h1 className="text-4xl font-bold text-center mb-6">
-    //     Employee Dashboard
-    //   </h1>
-
-    //   {/* Job Posts Section */}
-    // <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
-    //   <h2 className="text-2xl font-bold mb-4">Your Job Posts</h2>
-    //   {/* Job List */}
-    // <div className="space-y-4">
-    //   {/* Replace with actual job data */}
-    //   <div className="p-4 bg-gray-50 rounded-lg border">
-    //     <h3 className="font-semibold text-lg">Software Developer</h3>
-    //     <p className="text-gray-600">Posted on: 20-Oct-2024</p>
-    //     <p className="text-gray-600">Location: New York</p>
-    //   </div>
-    //   <div className="p-4 bg-gray-50 rounded-lg border">
-    //     <h3 className="font-semibold text-lg">Data Analyst</h3>
-    //     <p className="text-gray-600">Posted on: 15-Oct-2024</p>
-    //     <p className="text-gray-600">Location: San Francisco</p>
-    //   </div>
-    // </div>
-    // </div>
-
-    //   {/* Applicants Section */}
-    // <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
-    //   <h2 className="text-2xl font-bold mb-4">Applicants</h2>
-    //   {/* Applicants List */}
-    //   <div className="space-y-4">
-    //     {/* Replace with actual applicant data */}
-    //     <div className="p-4 bg-gray-50 rounded-lg border">
-    //       <h3 className="font-semibold text-lg">John Doe</h3>
-    //       <p className="text-gray-600">Applied for: Software Developer</p>
-    //       <p className="text-gray-600">Status: Under Review</p>
-    //     </div>
-    //     <div className="p-4 bg-gray-50 rounded-lg border">
-    //       <h3 className="font-semibold text-lg">Jane Smith</h3>
-    //       <p className="text-gray-600">Applied for: Data Analyst</p>
-    //       <p className="text-gray-600">Status: Interview Scheduled</p>
-    //     </div>
-    //   </div>
-    // </div>
-
-    //   {/* Post Job Section */}
-    // <div className="bg-white shadow-lg rounded-lg p-6">
-    //   <h2 className="text-2xl font-bold mb-4">Post a New Job</h2>
-    //   <button
-    //     onClick={handlePostJobClick}
-    //     className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg mb-4"
-    //   >
-    //     {showJobPostForm ? "Hide Job Form" : "Post Job"}
-    //   </button>
-
-    //   {/* Job Posting Form */}
-    //   {showJobPostForm && (
-    //     <form className="space-y-4">
-    //       <div>
-    //         <label className="block font-semibold">Job Title</label>
-    //         <input
-    //           type="text"
-    //           className="w-full p-2 border rounded-lg"
-    //           placeholder="Enter job title"
-    //         />
-    //       </div>
-    //       <div>
-    //         <label className="block font-semibold">Location</label>
-    //         <input
-    //           type="text"
-    //           className="w-full p-2 border rounded-lg"
-    //           placeholder="Enter job location"
-    //         />
-    //       </div>
-    //       <div>
-    //         <label className="block font-semibold">Job Description</label>
-    //         <textarea
-    //           className="w-full p-2 border rounded-lg"
-    //           placeholder="Enter job description"
-    //         ></textarea>
-    //       </div>
-    //       <div>
-    //         <label className="block font-semibold">Salary Range</label>
-    //         <input
-    //           type="text"
-    //           className="w-full p-2 border rounded-lg"
-    //           placeholder="Enter salary range"
-    //         />
-    //       </div>
-    //       <div>
-    //         <label className="block font-semibold">Skills</label>
-    //         <input
-    //           type="text"
-    //           className="w-full p-2 border rounded-lg"
-    //           placeholder="Enter required skills"
-    //         />
-    //       </div>
-    //       <button
-    //         type="submit"
-    //         className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg"
-    //       >
-    //         Submit
-    //       </button>
-    //     </form>
-    //   )}
-    // </div>
-    // </div>
   );
 };
 
