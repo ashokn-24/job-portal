@@ -11,21 +11,33 @@ import {
   Upload,
   message,
 } from "antd";
-import { PlusOutlined, EditOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  EditOutlined,
+  UploadOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import { useUser } from "../../context/UserContext";
 import moment from "moment";
 
 const UserProfile = () => {
-  const { user, setUser } = useUser(); // Assuming `setUser` updates user data in context
+  const { user, setUser, updateUser } = useUser();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editType, setEditType] = useState(null); // Tracks the section being edited
+  const [editType, setEditType] = useState(null);
+  const [currentEditIndex, setCurrentEditIndex] = useState(null);
+  const [hasChanges, setHasChanges] = useState(false);
   const [form] = Form.useForm();
 
-  // Show modal and set edit type (e.g., profile, education, or experience)
-  const showModal = (type, data = null) => {
+  const handleDataChange = (updatedData) => {
+    setUser(updatedData);
+    setHasChanges(true);
+  };
+
+  const showModal = (type, data = null, index = null) => {
     setEditType(type);
     setIsModalVisible(true);
-    form.setFieldsValue(data ? { ...data } : {}); // Prefill form with data if editing
+    setCurrentEditIndex(index);
+    form.setFieldsValue(data ? { ...data } : {});
   };
 
   const handleCancel = () => {
@@ -42,17 +54,29 @@ const UserProfile = () => {
         if (editType === "profile") {
           updatedUser = { ...updatedUser, ...values };
         } else if (editType === "education") {
-          updatedUser.education = [...user.education, values];
+          const updatedEducation = [...user.education];
+          if (currentEditIndex !== null) {
+            updatedEducation[currentEditIndex] = values;
+          } else {
+            updatedEducation.push(values);
+          }
+          updatedUser.education = updatedEducation;
         } else if (editType === "experience") {
-          updatedUser.experience = [...user.experience, values];
+          const updatedExperience = [...user.experience];
+          if (currentEditIndex !== null) {
+            updatedExperience[currentEditIndex] = values;
+          } else {
+            updatedExperience.push(values);
+          }
+          updatedUser.experience = updatedExperience;
         }
 
-        setUser(updatedUser);
-        message.success("Profile updated successfully!");
+        handleDataChange(updatedUser);
+        message.success("Data updated successfully!");
         setIsModalVisible(false);
         form.resetFields();
       })
-      .catch((error) => {
+      .catch(() => {
         message.error("Please fill in all required fields");
       });
   };
@@ -72,10 +96,29 @@ const UserProfile = () => {
           ...user,
           profilePic: URL.createObjectURL(info.file.originFileObj),
         };
-        setUser(newUser);
+        handleDataChange(newUser);
         message.success("Profile picture uploaded successfully!");
       }
     },
+  };
+
+  const handleUpdateProfile = () => {
+    updateUser(user);
+    setTimeout(() => {
+      setHasChanges(false);
+      message.success("Profile updated on server!");
+    }, 1000);
+  };
+
+  const handleRemoveItem = (type, index) => {
+    const updatedUser = { ...user };
+    if (type === "education") {
+      updatedUser.education = user.education.filter((_, i) => i !== index);
+    } else if (type === "experience") {
+      updatedUser.experience = user.experience.filter((_, i) => i !== index);
+    }
+    handleDataChange(updatedUser);
+    message.success("Item removed successfully!");
   };
 
   return (
@@ -100,6 +143,16 @@ const UserProfile = () => {
         </Button>
       </Card>
 
+      <Card title="Resume">
+        {user?.resume ? (
+          <a href={user?.resume} target="_blank" rel="noopener noreferrer">
+            View Resume
+          </a>
+        ) : (
+          <span>No resume uploaded</span>
+        )}
+      </Card>
+
       <Card
         title="Education"
         extra={
@@ -110,12 +163,27 @@ const UserProfile = () => {
             Add Education
           </Button>
         }
+        style={{ marginTop: "16px" }}
       >
         <List
           itemLayout="vertical"
           dataSource={user?.education}
           renderItem={(edu, index) => (
-            <List.Item key={index}>
+            <List.Item
+              key={index}
+              actions={[
+                <Button
+                  key={new Date()}
+                  icon={<EditOutlined />}
+                  onClick={() => showModal("education", edu, index)}
+                />,
+                <Button
+                  key={new Date()}
+                  icon={<DeleteOutlined />}
+                  onClick={() => handleRemoveItem("education", index)}
+                />,
+              ]}
+            >
               <List.Item.Meta
                 title={edu.degree}
                 description={`${edu.institution} (${moment(
@@ -150,7 +218,21 @@ const UserProfile = () => {
           itemLayout="vertical"
           dataSource={user?.experience}
           renderItem={(exp, index) => (
-            <List.Item key={index}>
+            <List.Item
+              key={index}
+              actions={[
+                <Button
+                  key={new Date()}
+                  icon={<EditOutlined />}
+                  onClick={() => showModal("experience", exp, index)}
+                />,
+                <Button
+                  key={new Date()}
+                  icon={<DeleteOutlined />}
+                  onClick={() => handleRemoveItem("experience", index)}
+                />,
+              ]}
+            >
               <List.Item.Meta
                 title={exp.title}
                 description={`${exp.company} (${moment(exp.startDate).format(
@@ -181,7 +263,6 @@ const UserProfile = () => {
               <Form.Item
                 name="name"
                 label="Name"
-                initialValue={user.name}
                 rules={[{ required: true, message: "Please enter your name" }]}
               >
                 <Input />
@@ -189,7 +270,6 @@ const UserProfile = () => {
               <Form.Item
                 name="email"
                 label="Email"
-                initialValue={user.email}
                 rules={[
                   {
                     required: true,
@@ -205,11 +285,7 @@ const UserProfile = () => {
                   <Button icon={<UploadOutlined />}>Upload Picture</Button>
                 </Upload>
               </Form.Item>
-              <Form.Item
-                name="resume"
-                label="Resume Link"
-                initialValue={user.resume}
-              >
+              <Form.Item name="resume" label="Resume Link">
                 <Input />
               </Form.Item>
             </>
@@ -245,7 +321,11 @@ const UserProfile = () => {
               <Form.Item name="endDate" label="End Date">
                 <DatePicker />
               </Form.Item>
-              <Form.Item name="grade" label="Grade">
+              <Form.Item
+                name="grade"
+                label="Grade"
+                rules={[{ required: true, message: "Please enter the grade" }]}
+              >
                 <Input />
               </Form.Item>
             </>
@@ -283,13 +363,29 @@ const UserProfile = () => {
               <Form.Item name="endDate" label="End Date">
                 <DatePicker />
               </Form.Item>
-              <Form.Item name="description" label="Job Description">
+              <Form.Item
+                name="description"
+                label="Job Description"
+                rules={[
+                  { required: true, message: "Please enter a job description" },
+                ]}
+              >
                 <Input.TextArea rows={4} />
               </Form.Item>
             </>
           )}
         </Form>
       </Modal>
+
+      {hasChanges && (
+        <Button
+          type="primary"
+          onClick={handleUpdateProfile}
+          style={{ marginTop: "16px" }}
+        >
+          Update Profile
+        </Button>
+      )}
     </div>
   );
 };

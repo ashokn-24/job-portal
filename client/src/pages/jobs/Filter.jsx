@@ -5,8 +5,6 @@ import {
   SearchOutlined,
   EnvironmentOutlined,
   GiftOutlined,
-  DollarOutlined,
-  UserOutlined,
 } from "@ant-design/icons";
 
 const Filter = ({ jobs, onFilter }) => {
@@ -14,6 +12,23 @@ const Filter = ({ jobs, onFilter }) => {
     jobType: "",
     skills: [],
   });
+
+  console.log(jobs);
+
+  const jobLocation = new Set();
+  const skills = new Set();
+
+  jobs.forEach((job) => {
+    jobLocation.add(job.location);
+    job.skills.forEach((skill) => {
+      skills.add(skill);
+    });
+  });
+
+  const jobLocationArray = Array.from(jobLocation);
+  const skillsArray = Array.from(skills);
+
+  console.log(filterData);
 
   const handleFilterChange = () => {
     const filteredJobs = jobs?.filter((job) => {
@@ -23,7 +38,7 @@ const Filter = ({ jobs, onFilter }) => {
           filterData.skills.every((skill) => job?.skills.includes(skill)))
       );
     });
-    console.log(filteredJobs); // Log the filtered jobs
+    console.log(filteredJobs);
     onFilter(filteredJobs);
   };
 
@@ -32,14 +47,18 @@ const Filter = ({ jobs, onFilter }) => {
       <div className="flex items-center space-x-2 ">
         <SearchOutlined className="text-mildBlue" />
         <Select
-          mode="tags"
+          mode="multiple"
           size="large"
           value={filterData.skills}
           placeholder="Skills"
           onChange={(value) =>
             setFilterData((prev) => ({ ...prev, skills: value }))
           }
-          className="w-40 border-0 border-white"
+          options={
+            skillsArray.length > 1 &&
+            skillsArray.map((skill) => ({ label: skill, value: skill }))
+          }
+          className="w-40 border-0 border-white -full"
         />
       </div>
 
@@ -51,6 +70,13 @@ const Filter = ({ jobs, onFilter }) => {
           onChange={(value) =>
             setFilterData((prev) => ({ ...prev, location: value }))
           }
+          options={
+            jobLocationArray.length > 1 &&
+            jobLocationArray.map((location) => ({
+              label: location.split(", ")[0],
+              value: location,
+            }))
+          }
           className="w-40"
         />
       </div>
@@ -58,12 +84,11 @@ const Filter = ({ jobs, onFilter }) => {
       <div className="flex items-center space-x-2">
         <GiftOutlined className="text-mildBlue" />
         <Select
-          value={filterData.jobType}
+          placeholder="Job Type"
           size="large"
           onChange={(value) =>
             setFilterData((prev) => ({ ...prev, jobType: value }))
           }
-          placeholder="Job Type"
           options={[
             { label: "Full-time", value: "Full-time" },
             { label: "Part-time", value: "Part-time" },

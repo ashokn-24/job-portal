@@ -125,27 +125,48 @@ export const updateUser = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
-    if (user) {
-      user.email = req.body.email || user.email;
-      user.username = req.body.username;
-      user.age = req.body.age;
-      user.gender = req.body.gender;
-
-      if (req.body.password) {
-        user.password = await bcrypt.hash(req.body.password, 10); // Hash new password
-      }
-
-      const updatedUser = await user.save();
-
-      res.json({
-        _id: updatedUser._id,
-        email: updatedUser.email,
-      });
-    } else {
-      res.status(404).json({ error: "User not found" });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
+
+    // Update basic information
+    user.email = req.body.email || user.email;
+    user.name = req.body.name || user.name;
+    user.gender = req.body.gender || user.gender;
+    user.profilePic = req.body.profilePic || user.profilePic;
+    user.resume = req.body.resume || user.resume;
+
+    // Update password if provided
+    if (req.body.password) {
+      user.password = await bcrypt.hash(req.body.password, 10);
+    }
+
+    // Update education if provided
+    if (req.body.education) {
+      user.education = req.body.education; // Assuming req.body.education is an array
+    }
+
+    // Update experience if provided
+    if (req.body.experience) {
+      user.experience = req.body.experience; // Assuming req.body.experience is an array
+    }
+
+    // Save the updated user data
+    const updatedUser = await user.save();
+
+    // Respond with updated user data
+    res.json({
+      _id: updatedUser._id,
+      email: updatedUser.email,
+      name: updatedUser.name,
+      gender: updatedUser.gender,
+      profilePic: updatedUser.profilePic,
+      resume: updatedUser.resume,
+      education: updatedUser.education,
+      experience: updatedUser.experience,
+    });
   } catch (error) {
-    res.status(404).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 

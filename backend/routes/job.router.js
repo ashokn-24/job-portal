@@ -9,6 +9,7 @@ import {
   updateJobById,
 } from "../controllers/job.controllers.js";
 import { protect, verifyRole } from "../middleware/auth.middleware.js";
+import { applyJob, getUserApplications } from "../controllers/application.js";
 
 const router = express.Router();
 
@@ -19,6 +20,20 @@ router.get("/profile", protect, verifyRole("employee", "admin"), getEmpProfile);
 router.post("/postjob", protect, verifyRole("employee", "admin"), postJob);
 
 router.get("/jobs", getJobs);
+
+router.post(
+  "/jobs/:id/apply",
+  protect,
+  verifyRole("employee", "admin"),
+  applyJob
+);
+
+router.get(
+  "/applications",
+  protect,
+  verifyRole("employee", "admin"),
+  getUserApplications
+);
 
 router
   .route("/job/:id")

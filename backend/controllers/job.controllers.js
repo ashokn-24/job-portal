@@ -160,8 +160,36 @@ export const postJob = async (req, res) => {
 
 export const getJobs = async (req, res) => {
   try {
+    const { jobType, workType, location, experienceLevel, skills } = req.query;
+
     const jobs = await Job.find({}).populate("company");
-    res.json(jobs);
+    let filteredJobs = jobs;
+
+    if (jobType) {
+      filteredJobs = filteredJobs.filter((job) => job.type === jobType);
+    }
+
+    if (workType) {
+      filteredJobs = filteredJobs.filter((job) => job.type === workType);
+    }
+
+    if (location) {
+      filteredJobs = filteredJobs.filter((job) => job.location === location);
+    }
+    if (experienceLevel) {
+      filteredJobs = filteredJobs.filter(
+        (job) => job.experienceLevel === experienceLevel
+      );
+    }
+
+    if (skills) {
+      const skillsArray = skills.split(",");
+      filteredJobs = filteredJobs.filter((job) =>
+        skillsArray.every((skill) => job.skills.includes(skill))
+      );
+    }
+
+    res.json(filteredJobs);
   } catch (error) {
     console.error("Error fetching jobs:", error);
     res.status(500).json({ message: "Error fetching jobs" });
@@ -217,7 +245,7 @@ export const updateJobById = async (req, res) => {
 
 export const updateJob = async (req, res) => {
   try {
-    const { id } = req.params; // Assuming the job ID is in the request URL parameters
+    const { id } = req.params;
 
     const job = await Job.findById(id);
 

@@ -8,7 +8,7 @@ TimeAgo.addDefaultLocale(en);
 const JobCard = ({ job }) => {
   const timeAgo = new TimeAgo("en-US");
   return (
-    <div className="bg-white broder-2 border-2-gray shadow-2xl w-[500px] rounded-lg p-6">
+    <div className="grid gap-1 bg-white broder-2 border-2-gray shadow-2xl w-[350px] rounded-lg p-6">
       <div className="flex justify-start gap-4">
         <FcDepartment size={25} />
         <div className="text-md font-semibold text-gray-500 mb-2">
@@ -29,11 +29,11 @@ const JobCard = ({ job }) => {
           {timeAgo.format(new Date(job.createdAt))}
         </div>{" "}
         <div>
-          {/* <Link to={`/jobs/${job._id}`}> */}
-          <button className="bg-mildBlue text-white text-sm rounded-md px-2 py-1 hover:scale-110 hover:bg-darkBlue transition-all duration-500">
-            Apply Here
-          </button>
-          {/* </Link> */}
+          <Link to={`/jobs/${job._id}`}>
+            <button className="bg-mildBlue text-white text-sm rounded-md px-2 py-1 hover:scale-110 hover:bg-darkBlue transition-all duration-500">
+              Apply Here
+            </button>
+          </Link>
         </div>
       </div>
     </div>

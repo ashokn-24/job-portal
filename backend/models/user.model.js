@@ -1,13 +1,9 @@
 import mongoose from "mongoose";
-// import { v4 as uuidv4 } from "uuid";
+import educationSchema from "./education.model.js";
+import experienceSchema from "./experience.model.js";
 
 const userSchema = mongoose.Schema(
   {
-    // id: {
-    //   type: String,
-    //   required: true,
-    //   default: uuidv4,
-    // },
     name: {
       type: String,
       required: true,
@@ -16,7 +12,6 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      // match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
     },
     password: {
       type: String,
@@ -39,6 +34,10 @@ const userSchema = mongoose.Schema(
       enum: ["admin", "basic", "employee"],
       default: "basic",
     },
+    resume: {
+      type: String,
+      default: "",
+    },
     company: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",
@@ -46,6 +45,8 @@ const userSchema = mongoose.Schema(
         return this.role === "employee";
       },
     },
+    education: [educationSchema],
+    experience: [experienceSchema],
   },
   { timestamps: true }
 );

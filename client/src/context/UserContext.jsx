@@ -89,6 +89,19 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  const updateUser = async (payload) => {
+    try {
+      const response = await api.put("/auth/profile", payload);
+      console.log("Update successful:", response.data);
+      // setUser(response.data);
+    } catch (error) {
+      console.error(
+        "Error updating profile:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -105,6 +118,7 @@ export const UserProvider = ({ children }) => {
         token,
         setToken,
         loading,
+        updateUser,
         signupUser,
         employeeSignup,
         loginUser,
