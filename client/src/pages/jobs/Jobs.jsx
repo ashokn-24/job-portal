@@ -7,18 +7,34 @@ import { Badge, Checkbox, Spin } from "antd";
 
 const Jobs = () => {
   const { jobs, loadAllJobs, loading } = useJobs();
+  const [filteredJobs, setFilteredJobs] = useState([]);
 
   const [page, setPage] = useState(1);
 
-  const sortedJobs = jobs.sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
   useEffect(() => {
     loadAllJobs();
   }, []);
 
+  useEffect(() => {
+    setFilteredJobs(jobs); // Initialize filteredJobs with all jobs
+  }, [jobs]);
+
+  let count = new Map();
+
+  jobs.forEach((job) => {
+    if (count.has(job.workType)) {
+      count.set(job.workType, count.get(job.workType) + 1);
+    } else {
+      count.set(job.workType, 1);
+    }
+  });
+
+  const sortedJobs = filteredJobs.sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
+
   const handleFilterResults = (filteredJobs) => {
-    console.log("Filtered Jobs:", filteredJobs);
+    setFilteredJobs(filteredJobs); // Update the filtered jobs state
   };
 
   if (loading)
@@ -37,19 +53,17 @@ const Jobs = () => {
         </div>
         <div className="container mx-auto p-8 flex justify-between ">
           <div className=" h-fit px-2  py-5 flex flex-col gap-6 text-gray-500">
-            <div>
-              <div className="bg-blue-50 rounded-md p-5 m-2 grid gap-2 text-sm">
-                <h1 className="font-bold">Create Job Alert</h1>
-                <p> Create a job alert now and never miss a job</p>
-                <input
-                  type="text"
-                  placeholder="Enter Job Keyword"
-                  className="border-0 rounded-md p-2 text-sm"
-                />
-                <button className="bg-darkBlue text-white rounded-md px-3 py-2">
-                  Create Job Alert
-                </button>
-              </div>
+            <div className="bg-blue-50 rounded-md p-5 m-2 grid gap-2 text-sm">
+              <h1 className="font-bold">Create Job Alert</h1>
+              <p> Create a job alert now and never miss a job</p>
+              <input
+                type="text"
+                placeholder="Enter Job Keyword"
+                className="border-0 rounded-md p-2 text-sm"
+              />
+              <button className="bg-darkBlue text-white rounded-md px-3 py-2">
+                Create Job Alert
+              </button>
             </div>
 
             <div className="rounded-md bg-white px-5 py-10 grid gap-5">
@@ -57,15 +71,18 @@ const Jobs = () => {
                 <h1>Work Mode</h1>
                 <div className="flex justify-between">
                   <Checkbox className="text-gray-500">Onsite</Checkbox>
-                  <Badge count={25} color="bg-darkBlue" />
+                  <Badge count={count.get("Onsite")} color="bg-darkBlue" />
                 </div>
                 <div className="flex justify-between">
                   <Checkbox className="text-gray-500">Work From Home</Checkbox>
-                  <Badge count={25} color="bg-darkBlue" />
+                  <Badge
+                    count={count.get("Work From Home")}
+                    color="bg-darkBlue"
+                  />
                 </div>
                 <div className="flex justify-between">
                   <Checkbox className="text-gray-500">Hybrid</Checkbox>
-                  <Badge count={25} color="bg-darkBlue" />
+                  <Badge count={count.get("Hybrid")} color="bg-darkBlue" />
                 </div>
               </div>
               <div className="grid gap-2">

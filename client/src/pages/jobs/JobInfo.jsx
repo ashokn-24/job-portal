@@ -1,22 +1,29 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useJobs } from "../../context/JobsContext";
 import { useEffect, useState } from "react";
 import { Button, Result, Spin } from "antd";
+import { useUser } from "../../context/UserContext";
 
 function JobInfo() {
   const { id } = useParams();
   const { jobData, getJobById, loading, applyJob, applicationStatus } =
     useJobs();
+  const { user } = useUser();
   const [success, setSuccess] = useState(false);
   const [descriptionExpanded, setDescriptionExpanded] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getJobById(id);
   }, [id]);
 
   const handleApply = () => {
-    applyJob(id);
-    setSuccess(true);
+    if (user) {
+      applyJob(id);
+    } else {
+      navigate("/login");
+      setSuccess(true);
+    }
   };
 
   if (loading) {
@@ -40,8 +47,6 @@ function JobInfo() {
       />
     );
   }
-
-    
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">

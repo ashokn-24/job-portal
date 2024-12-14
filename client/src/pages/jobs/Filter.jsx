@@ -11,40 +11,38 @@ const Filter = ({ jobs, onFilter }) => {
   const [filterData, setFilterData] = useState({
     jobType: "",
     skills: [],
+    location: "",
   });
-
-  console.log(jobs);
-
-  const jobLocation = new Set();
-  const skills = new Set();
-
-  jobs.forEach((job) => {
-    jobLocation.add(job.location);
-    job.skills.forEach((skill) => {
-      skills.add(skill);
-    });
-  });
-
-  const jobLocationArray = Array.from(jobLocation);
-  const skillsArray = Array.from(skills);
 
   console.log(filterData);
+  const jobLocation = Array.from(new Set(jobs?.map((job) => job.location)));
+  const skillsArray = Array.from(
+    new Set(jobs?.flatMap((job) => job.skills || []))
+  );
 
   const handleFilterChange = () => {
-    const filteredJobs = jobs?.filter((job) => {
-      return (
-        (filterData.jobType === "" || job?.jobType === filterData.jobType) &&
-        (filterData.skills.length === 0 ||
-          filterData.skills.every((skill) => job?.skills.includes(skill)))
-      );
+    const filteredJobs = jobs.filter((job) => {
+      const matchesSkills = filterData.skills.length
+        ? filterData.skills.some((skill) => job.skills?.includes(skill))
+        : true; // Replace with `.every` if matching all skills is desired
+
+      const matchesJobType = filterData.jobType
+        ? job.workType === filterData.jobType
+        : true;
+
+      const matchesLocation = filterData.location
+        ? job.location === filterData.location
+        : true;
+
+      return matchesSkills && matchesJobType && matchesLocation;
     });
-    console.log(filteredJobs);
-    onFilter(filteredJobs);
+
+    onFilter(filteredJobs); // Pass filtered jobs to parent
   };
 
   return (
-    <div className=" border-gray-300 flex items-center rounded-md p-2 space-x-2 justify-center">
-      <div className="flex items-center space-x-2 ">
+    <div className="border-gray-300 flex items-center rounded-md p-2 space-x-2 justify-center">
+      <div className="flex items-center space-x-2">
         <SearchOutlined className="text-mildBlue" />
         <Select
           mode="multiple"
@@ -54,11 +52,8 @@ const Filter = ({ jobs, onFilter }) => {
           onChange={(value) =>
             setFilterData((prev) => ({ ...prev, skills: value }))
           }
-          options={
-            skillsArray.length > 1 &&
-            skillsArray.map((skill) => ({ label: skill, value: skill }))
-          }
-          className="w-40 border-0 border-white -full"
+          options={skillsArray.map((skill) => ({ label: skill, value: skill }))}
+          className="min-w-40 max-w-[500px] border-0 border-white"
         />
       </div>
 
@@ -70,13 +65,10 @@ const Filter = ({ jobs, onFilter }) => {
           onChange={(value) =>
             setFilterData((prev) => ({ ...prev, location: value }))
           }
-          options={
-            jobLocationArray.length > 1 &&
-            jobLocationArray.map((location) => ({
-              label: location.split(", ")[0],
-              value: location,
-            }))
-          }
+          options={jobLocation.map((location) => ({
+            label: location.split(", ")[0],
+            value: location,
+          }))}
           className="w-40"
         />
       </div>
@@ -97,17 +89,6 @@ const Filter = ({ jobs, onFilter }) => {
           className="w-40"
         />
       </div>
-
-      {/* <div className="flex items-center space-x-2">
-        <DollarOutlined className="text-mildBlue" />
-        <Select
-          placeholder="Salary Range"
-          onChange={(value) =>
-            setFilterData((prev) => ({ ...prev, salaryRange: value }))
-          }
-          className="w-40"
-        />
-      </div> */}
 
       <button
         onClick={handleFilterChange}

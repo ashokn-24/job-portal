@@ -13,7 +13,6 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(null);
 
-  console.log(user);
 
   useEffect(() => {
     const initialLoad = async () => {

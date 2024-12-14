@@ -15,15 +15,13 @@ const JobProvider = ({ children }) => {
   const [applicationStatus, setApplicationStatus] = useState(null);
   const [applications, setApplications] = useState([]);
   const [applicants, setApplicants] = useState([]);
-  console.log("application", applicationStatus);
-  console.log(dashboardData);
 
-  const loadAllJobs = async () => {
+  const loadAllJobs = async (query) => {
     setLoading(true);
     try {
-      const res = await api.get("/employee/jobs");
+      const res = await api.get(`/employee/jobs?${query}`);
       setJobs(res.data);
-      console.log("data", res.data);
+      // console.log("data", res.data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -36,7 +34,7 @@ const JobProvider = ({ children }) => {
     try {
       const res = await api.get(`/employee/job/${id}`);
       setJobData(res.data);
-      console.log("data", res.data);
+      // console.log("data", res.data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -75,7 +73,6 @@ const JobProvider = ({ children }) => {
     setLoading(true);
     try {
       const res = await api.post(`employee/jobs/${id}/apply`);
-      console.log(res);
       setApplicationStatus(res.data);
     } catch (error) {
       console.log(error);

@@ -43,11 +43,6 @@ router
 
 export default router;
 
-// GET /employer/jobs – Get a list of all job postings made by the employer.
-// GET /employer/jobs/ – Get details of a specific job posting.
-// DELETE /employer/jobs/ – Remove a job posting.
-// GET /employer/profile – Get the employer’s profile details.
-
 // PUT /employer/profile – Update employer details (company info, logo, etc.).
 // PUT /employer/jobs/ – Edit the job details (title, description, salary, etc.).
 // GET /employer/jobs/applications – View all applications for a specific job.

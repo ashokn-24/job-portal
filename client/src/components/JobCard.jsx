@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+/* eslint-disable react/prop-types */
 import { FcDepartment } from "react-icons/fc";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
@@ -12,24 +13,24 @@ const JobCard = ({ job }) => {
       <div className="flex justify-start gap-4">
         <FcDepartment size={25} />
         <div className="text-md font-semibold text-gray-500 mb-2">
-          {" "}
-          {job.jobTitle}
+          {job?.jobTitle || "Job Title Unavailable"}
         </div>
       </div>
-      <h2 className="text-xl font-semibold mb-2">{job.name}</h2>{" "}
       <div className="text-sm flex gap-7 text-gray-500">
-        {" "}
-        {job.company.name} <div>{job.location}</div>
+        {job?.company?.name || "Company Name Unavailable"}
+        <div>{job?.location || "Location Unavailable"}</div>
       </div>
       <div className=" mt-2 text-sm text-gray-500">
-        <div className="py-2">{job.jobType}</div>
+        <div className="py-2">{job?.jobType || "Job Type Unavailable"}</div>
       </div>
       <div className="flex justify-between">
         <div className="text-xs text-gray-500 flex items-end">
-          {timeAgo.format(new Date(job.createdAt))}
-        </div>{" "}
+          {job?.createdAt
+            ? timeAgo.format(new Date(job.createdAt))
+            : "Date Unavailable"}
+        </div>
         <div>
-          <Link to={`/jobs/${job._id}`}>
+          <Link to={`/jobs/${job?._id}`}>
             <button className="bg-mildBlue text-white text-sm rounded-md px-2 py-1 hover:scale-110 hover:bg-darkBlue transition-all duration-500">
               Apply Here
             </button>
