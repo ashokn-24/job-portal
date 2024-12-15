@@ -3,38 +3,36 @@ import { useJobs } from "../../context/JobsContext";
 import JobCard from "../../components/JobCard";
 import Navbar from "../../components/Navbar";
 import Filter from "./Filter";
-import { Badge, Checkbox, Spin } from "antd";
+import { Spin } from "antd";
+import CheckboxFilter from "./CheckboxFilter";
+import JobAlert from "../../components/JobAlert";
 
 const Jobs = () => {
-  const { jobs, loadAllJobs, loading } = useJobs();
-  const [filteredJobs, setFilteredJobs] = useState([]);
-
+  const { jobs, loadAllJobs, filteredJobs, filterJobs, loading } = useJobs();
   const [page, setPage] = useState(1);
 
+  const displayedJobs = filteredJobs.length > 0 ? filteredJobs : jobs;
+
+  // const count = displayedJobs.reduce((acc, job) => {
+  //   acc[job.workType] = (acc[job.workType] || 0) + 1;
+  //   return acc;
+  // }, {});
+
+  // Sort jobs by creation date (descending)
+  const sortedJobs = displayedJobs.sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
+
+  // Load all jobs on initial render
   useEffect(() => {
     loadAllJobs();
   }, []);
 
-  useEffect(() => {
-    setFilteredJobs(jobs); // Initialize filteredJobs with all jobs
-  }, [jobs]);
-
-  let count = new Map();
-
-  jobs.forEach((job) => {
-    if (count.has(job.workType)) {
-      count.set(job.workType, count.get(job.workType) + 1);
-    } else {
-      count.set(job.workType, 1);
-    }
-  });
-
-  const sortedJobs = filteredJobs.sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
-
+  // Handle filter results
   const handleFilterResults = (filteredJobs) => {
-    setFilteredJobs(filteredJobs); // Update the filtered jobs state
+    console.log("Filtered Jobs:", filteredJobs);
+    setPage(1);
+    filterJobs(filteredJobs);
   };
 
   if (loading)
@@ -51,86 +49,51 @@ const Jobs = () => {
         <div className="mb-5">
           <Filter jobs={jobs} onFilter={handleFilterResults} />
         </div>
-        <div className="container mx-auto p-8 flex justify-between ">
-          <div className=" h-fit px-2  py-5 flex flex-col gap-6 text-gray-500">
-            <div className="bg-blue-50 rounded-md p-5 m-2 grid gap-2 text-sm">
-              <h1 className="font-bold">Create Job Alert</h1>
-              <p> Create a job alert now and never miss a job</p>
-              <input
-                type="text"
-                placeholder="Enter Job Keyword"
-                className="border-0 rounded-md p-2 text-sm"
-              />
-              <button className="bg-darkBlue text-white rounded-md px-3 py-2">
-                Create Job Alert
-              </button>
-            </div>
+        <div className="container mx-auto p-8 flex justify-between gap-6">
+          {/* Left Sidebar */}
+          <div className="h-fit px-2 py-5 flex flex-col gap-6 text-gray-500">
+            {/* Create Job Alert */}
+            <JobAlert />
 
-            <div className="rounded-md bg-white px-5 py-10 grid gap-5">
-              <div className="grid gap-2">
-                <h1>Work Mode</h1>
-                <div className="flex justify-between">
-                  <Checkbox className="text-gray-500">Onsite</Checkbox>
-                  <Badge count={count.get("Onsite")} color="bg-darkBlue" />
-                </div>
-                <div className="flex justify-between">
-                  <Checkbox className="text-gray-500">Work From Home</Checkbox>
-                  <Badge
-                    count={count.get("Work From Home")}
-                    color="bg-darkBlue"
-                  />
-                </div>
-                <div className="flex justify-between">
-                  <Checkbox className="text-gray-500">Hybrid</Checkbox>
-                  <Badge count={count.get("Hybrid")} color="bg-darkBlue" />
-                </div>
-              </div>
-              <div className="grid gap-2">
-                <h1>Experience</h1>
-                <div>
-                  <Checkbox className="text-gray-500">Fresher</Checkbox>
-                </div>
-                <div>
-                  <Checkbox className="text-gray-500">1+ year</Checkbox>
-                </div>
-                <div>
-                  <Checkbox className="text-gray-500">3+ year</Checkbox>
-                </div>
-              </div>
-            </div>
+            {/* Work Mode and Experience Filters */}
+            <CheckboxFilter />
           </div>
-          <div className="grid gap-3">
-            <div>Showing {sortedJobs.length} jobs</div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 w-[700px] gap-8">
+
+          {/* Job Cards Section */}
+          <div className="flex-grow">
+            <div className="mb-4">Showing {sortedJobs.length} jobs</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
               {sortedJobs.length > 0 ? (
                 sortedJobs
-                  .slice(page * 10 - 10, page * 10)
+                  .slice((page - 1) * 10, page * 10)
                   .map((job) => <JobCard key={job._id} job={job} />)
               ) : (
                 <p className="text-center col-span-full text-gray-600">
                   No jobs available at the moment.
                 </p>
               )}
-
-              {jobs.length > 0 && (
-                <div className="flex gap-3 justify-center">
-                  {jobs.length / 10 > 0 &&
-                    Array.from({ length: Math.ceil(jobs.length / 10) }).map(
-                      (_, i) => (
-                        <span
-                          key={i}
-                          className="bg-darkBlue text-white  px-2 py-1 cursor-pointer rounded-[50%] hover:scale-110 transition-all duration-300"
-                          onClick={() => setPage(i + 1)}
-                        >
-                          {i + 1}
-                        </span>
-                      )
-                    )}
-                </div>
-              )}
             </div>
+            {/* Pagination */}
+            {displayedJobs.length > 10 && (
+              <div className="flex gap-3 justify-center mt-6">
+                {Array.from({
+                  length: Math.ceil(displayedJobs.length / 10),
+                }).map((_, i) => (
+                  <span
+                    key={i}
+                    className={`px-3 py-1 cursor-pointer rounded-full ${
+                      page === i + 1
+                        ? "bg-darkBlue text-white"
+                        : "bg-gray-200 text-gray-700"
+                    } hover:scale-110 transition-transform`}
+                    onClick={() => setPage(i + 1)}
+                  >
+                    {i + 1}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
-          <div>{/* Empty fot space */}</div>
         </div>
       </div>
     </>

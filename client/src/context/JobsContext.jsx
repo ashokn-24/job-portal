@@ -10,6 +10,7 @@ const JobProvider = ({ children }) => {
   const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [jobData, setJobData] = useState({});
+  const [filteredJobs, setFilteredJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState({});
   const [applicationStatus, setApplicationStatus] = useState(null);
@@ -29,12 +30,24 @@ const JobProvider = ({ children }) => {
     }
   };
 
+  const filterJobs = async (query) => {
+    setLoading(true);
+    try {
+      const res = await api.get(`/employee/jobs?${query}`);
+      setFilteredJobs(res.data);
+    } catch (error) {
+      console.error("Error fetching filtered jobs:", error);
+      setFilteredJobs([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getJobById = async (id) => {
     setLoading(true);
     try {
       const res = await api.get(`/employee/job/${id}`);
       setJobData(res.data);
-      // console.log("data", res.data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -107,12 +120,14 @@ const JobProvider = ({ children }) => {
     <JobContext.Provider
       value={{
         jobs,
+        filteredJobs,
         dashboardData,
         jobData,
         applicationStatus,
         applications,
         loading,
         loadAllJobs,
+        filterJobs,
         getJobById,
         getDashBoardData,
         postJob,

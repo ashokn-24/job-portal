@@ -167,16 +167,18 @@ export const getJobs = async (req, res) => {
     let filteredJobs = jobs;
 
     if (jobType) {
-      filteredJobs = filteredJobs.filter((job) => job.type === jobType);
+      filteredJobs = filteredJobs.filter((job) => job.jobType === jobType);
     }
 
     if (workType) {
-      filteredJobs = filteredJobs.filter((job) => job.type === workType);
+      filteredJobs = filteredJobs.filter((job) => job.workType === workType);
     }
 
     if (location) {
       filteredJobs = filteredJobs.filter((job) => job.location === location);
     }
+
+    console.log(experienceLevel);
     if (experienceLevel) {
       filteredJobs = filteredJobs.filter(
         (job) => job.experienceLevel === experienceLevel
@@ -186,7 +188,7 @@ export const getJobs = async (req, res) => {
     if (skills) {
       const skillsArray = skills.split(",");
       filteredJobs = filteredJobs.filter((job) =>
-        skillsArray.every((skill) => job.skills.includes(skill))
+        skillsArray.some((skill) => job.skills.includes(skill))
       );
     }
 
