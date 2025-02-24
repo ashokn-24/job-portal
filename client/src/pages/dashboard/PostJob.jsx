@@ -1,11 +1,13 @@
+/* eslint-disable react/prop-types */
 import { Form, Input, Select, Button, Space, Checkbox } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useJobs } from "../../context/JobsContext";
+import { useParams } from "react-router-dom";
 
 const { Option } = Select;
 
-const PostJob = () => {
-  const { dashboardData, postJob } = useJobs();
+const PostJob = ({ initialData }) => {
+  const { dashboardData, postJob, updateJobById } = useJobs();
   const [formData, setFormData] = useState({
     jobTitle: "",
     jobDescription: "",
@@ -21,29 +23,54 @@ const PostJob = () => {
     company: "",
   });
 
+  console.log(initialData);
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        jobTitle: initialData.jobTitle || "",
+        jobDescription: initialData.jobDescription || "",
+        jobType: initialData.jobType || "",
+        workType: initialData.workType || "",
+        location: initialData.location || "",
+        industry: initialData.industry || "",
+        experienceLevel: initialData.experienceLevel || "",
+        salaryPeriod: initialData.salaryPeriod || "",
+        salaryAmount: initialData.salaryAmount || "",
+        unStipend: initialData.unStipend || false,
+        skills: initialData.skills || [],
+        company: initialData.company?.name || "",
+      });
+    }
+  }, [initialData]);
+
+  console.log("formData", formData);
+
   const handleUnStipendChange = (e) => {
     setFormData({ ...formData, unStipend: e.target.checked });
   };
 
+  const { id } = useParams();
   const handleSubmit = (values) => {
     console.log("Form Data:", values);
+    console.log(dashboardData);
     setFormData({
       ...values,
-      industry: dashboardData?.company?.industry,
+      industry: initialData.industry,
       company: dashboardData?.company?._id,
     });
 
-    postJob(formData);
+    initialData ? updateJobById(initialData._id, formData) : postJob(formData);
   };
 
   return (
-    <div className="h-[100vh] overflow-auto border-2 bg-white p-10">
+    <div className="h-[100vh] overflow-auto  bg-white px-2 py-5">
       {/* <div>Post New Job</div> */}
       <Form
         layout="vertical"
         size="large"
         onFinish={handleSubmit}
-        initialValues={formData}
+        initialValues={initialData ? initialData : formData}
       >
         <Form.Item label="Job Title" name="jobTitle">
           <Input
@@ -99,16 +126,6 @@ const PostJob = () => {
             className="border-gray-200 rounded-md"
           />
         </Form.Item>
-        {/* 
-        <Form.Item label="Industry" name="industry">
-          <Input
-            value={formData.industry}
-            onChange={(e) =>
-              setFormData({ ...formData, industry: e.target.value })
-            }
-            className="border-gray-200 rounded-md"
-          />
-        </Form.Item> */}
 
         <Form.Item label="Experience Level" name="experienceLevel">
           <Select
@@ -136,13 +153,13 @@ const PostJob = () => {
               }
               className="h-full text-sm border-none border-white"
               defaultValue={"Salary Period"}
-              disabled={formData.unStipend} // Disable when checkbox is checked
+              disabled={formData.unStipend}
             >
               <Option value="Yearly">Yearly</Option>
               <Option value="Monthly">Monthly</Option>
             </Select>
             <Input
-              prefix="₹" // Prefix for currency
+              prefix="₹"
               value={formData.salaryAmount}
               onChange={(e) =>
                 setFormData({ ...formData, salaryAmount: e.target.value })
@@ -151,7 +168,7 @@ const PostJob = () => {
               noStyle
               placeholder="Enter amount"
               className="rounded-md text-sm border-gray-200"
-              disabled={formData.unStipend} // Disable when checkbox is checked
+              disabled={formData.unStipend}
             />
 
             <div className="flex items-end px-4">
@@ -177,8 +194,12 @@ const PostJob = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Submit
+          <Button
+            type="primary"
+            htmlType="submit"
+            className={`${initialData && "w-full"}`}
+          >
+            {initialData ? "Update" : "Submit"}
           </Button>
         </Form.Item>
       </Form>

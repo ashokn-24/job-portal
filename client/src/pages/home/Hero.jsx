@@ -14,7 +14,7 @@ const Hero = () => {
           className="text-5xl font-bold mb-4 animate-fadeIn"
           style={{ textShadow: "3px 3px 4px rgba(0, 0, 255, 0.5)" }}
         >
-          Unlock Your Dream Career with Job Function
+          Unlock Your Dream Career with Job Fution
         </h1>
         <p
           className="text-xl mb-8 animate-fadeIn delay-1s"

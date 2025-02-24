@@ -1,3 +1,10 @@
+import {
+  FacebookOutlined,
+  InstagramOutlined,
+  LinkedinOutlined,
+  TwitterOutlined,
+} from "@ant-design/icons";
+
 const Footer = () => {
   return (
     <footer className="bg-gray-800 text-white py-8">
@@ -25,20 +32,16 @@ const Footer = () => {
           <h3 className="text-lg font-semibold mb-4">Follow Us:</h3>
           <div className="flex space-x-4">
             <a href="#">
-              <img src="facebook-icon.png" alt="Facebook" className="w-6 h-6" />
+              <FacebookOutlined />
             </a>
             <a href="#">
-              <img src="linkedin-icon.png" alt="LinkedIn" className="w-6 h-6" />
+              <InstagramOutlined />
             </a>
             <a href="#">
-              <img src="twitter-icon.png" alt="Twitter" className="w-6 h-6" />
+              <LinkedinOutlined />
             </a>
             <a href="#">
-              <img
-                src="instagram-icon.png"
-                alt="Instagram"
-                className="w-6 h-6"
-              />
+              <TwitterOutlined />
             </a>
           </div>
         </div>
@@ -100,7 +103,7 @@ const Footer = () => {
         </div>
       </div>
       <div className="text-center mt-8">
-        <p>© 2024 [Company Name]. All rights reserved.</p>
+        <p>© 2024 Job Fution. All rights reserved.</p>
       </div>
     </footer>
   );

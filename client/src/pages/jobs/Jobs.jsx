@@ -6,6 +6,7 @@ import Filter from "./Filter";
 import { Spin } from "antd";
 import CheckboxFilter from "./CheckboxFilter";
 import JobAlert from "../../components/JobAlert";
+import Footer from "../../components/Footer";
 
 const Jobs = () => {
   const { jobs, loadAllJobs, filteredJobs, filterJobs, loading } = useJobs();
@@ -16,9 +17,9 @@ const Jobs = () => {
   // const count = displayedJobs.reduce((acc, job) => {
   //   acc[job.workType] = (acc[job.workType] || 0) + 1;
   //   return acc;
-  // }, {});
-
+  // }, {})
   // Sort jobs by creation date (descending)
+
   const sortedJobs = displayedJobs.sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
@@ -52,7 +53,7 @@ const Jobs = () => {
         <div className="container mx-auto p-8 flex justify-between gap-6">
           {/* Left Sidebar */}
           <div className="h-fit px-2 py-5 flex flex-col gap-6 text-gray-500">
-            {/* Create Job Alert */}
+            {/* Job Alert */}
             <JobAlert />
 
             {/* Work Mode and Experience Filters */}
@@ -96,6 +97,7 @@ const Jobs = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 };

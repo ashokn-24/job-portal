@@ -7,6 +7,7 @@ import {
   getUser,
   updateUser,
   refresh,
+  resetPasswordDirect,
 } from "../controllers/auth.controllers.js";
 
 const router = express.Router();
@@ -18,6 +19,8 @@ router.post("/login", login);
 router.post("/logout", logout);
 
 router.post("/refresh", refresh);
+
+router.post("/reset_password", resetPasswordDirect);
 
 router
   .route("/profile")

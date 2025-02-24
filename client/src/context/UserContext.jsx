@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import api, { clearAuthHeader, setAuthHeader } from "../utils/axiosConfig";
 import { useNavigate } from "react-router-dom";
-import { Spin } from "antd";
+import { message, Spin } from "antd";
 
 const UserContext = createContext();
 
@@ -12,7 +12,6 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(null);
-
 
   useEffect(() => {
     const initialLoad = async () => {
@@ -38,6 +37,22 @@ export const UserProvider = ({ children }) => {
       setUser(res.data.user);
       setToken(res.data.accessToken);
       setAuthHeader(res.data.accessToken);
+      if (res.status === 201) {
+        message.success("Login successfully");
+        navigate("/");
+      }
+    } catch (error) {
+      message.error(error.message);
+      console.error("Error logging in:", error);
+    }
+  };
+  const resetPassword = async (payload) => {
+    try {
+      const res = await api.post("/auth/reset_password", payload);
+
+      // setUser(res.data.user);
+      // setToken(res.data.accessToken);
+      // setAuthHeader(res.data.accessToken);
       if (res.status === 201) {
         navigate("/");
       }
@@ -67,8 +82,10 @@ export const UserProvider = ({ children }) => {
       clearAuthHeader();
       setUser(null);
       setToken(null);
+      message.success("User logged out successfully");
       navigate("/");
     } catch (error) {
+      message.error(error.message);
       console.log("Error logging out:", error);
     }
   };
@@ -79,21 +96,24 @@ export const UserProvider = ({ children }) => {
       setUser(res.data.user);
       setToken(res.data.accessToken);
       setAuthHeader(res.data.accessToken);
+      message.success("Employee registered successfully");
 
       if (res.status === 201) {
         navigate("/");
       }
     } catch (error) {
+      message.error(error.message);
       console.log(error.message);
     }
   };
 
   const updateUser = async (payload) => {
     try {
-      const response = await api.put("/auth/profile", payload);
-      console.log("Update successful:", response.data);
+      await api.put("/auth/profile", payload);
+      message.success("Profile updated successfully");
       // setUser(response.data);
     } catch (error) {
+      message.error("Error updating profile");
       console.error(
         "Error updating profile:",
         error.response ? error.response.data : error.message
@@ -122,6 +142,7 @@ export const UserProvider = ({ children }) => {
         employeeSignup,
         loginUser,
         logoutUser,
+        resetPassword,
       }}
     >
       {children}

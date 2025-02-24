@@ -8,7 +8,6 @@ import authRoutes from "./routes/auth.router.js";
 import employeeRoutes from "./routes/job.router.js";
 import dashboardRoutes from "./routes/dashboard.router.js";
 import { connectToMongoDB } from "../db/connectMongoDb.js";
-import { protect } from "./middleware/auth.middleware.js";
 
 const app = express();
 
@@ -28,10 +27,6 @@ app.use(cookieParser());
 app.use("/auth", authRoutes);
 app.use("/employee", employeeRoutes);
 app.use("/dashboard", dashboardRoutes);
-
-app.get("/", (req, res) => {
-  res.send("hello Welcome to server");
-});
 
 app.listen(PORT, () => {
   connectToMongoDB();

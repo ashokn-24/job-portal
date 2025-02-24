@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import api from "../utils/axiosConfig";
 import { useNavigate } from "react-router-dom";
+import { message } from "antd";
 
 const JobContext = createContext();
 
@@ -15,12 +16,24 @@ const JobProvider = ({ children }) => {
   const [dashboardData, setDashboardData] = useState({});
   const [applicationStatus, setApplicationStatus] = useState(null);
   const [applications, setApplications] = useState([]);
+  const [dashboardApplications, setDashboardApplications] = useState([]);
   const [applicants, setApplicants] = useState([]);
+  const [userApplication, setUserApplication] = useState(null);
+
+  console.log(dashboardData);
+  console.log(dashboardData?.company?._id);
+  useEffect(() => {
+    loadAllJobs();
+    dashboardData?.company &&
+      getCompanyApplications(dashboardData?.company?._id);
+  }, [dashboardData?.company]);
 
   const loadAllJobs = async (query) => {
     setLoading(true);
     try {
-      const res = await api.get(`/employee/jobs?${query}`);
+      const res = await api.get(
+        query ? `/employee/jobs?${query}` : `/employee/jobs`
+      );
       setJobs(res.data);
       // console.log("data", res.data);
     } catch (error) {
@@ -71,12 +84,12 @@ const JobProvider = ({ children }) => {
     setLoading(true);
     try {
       const res = await api.post(`employee/postjob`, payload);
-      console.log(res.data);
+      message.success("Job posted successfully");
       // setTimeout(() => {
       //   navigate("/");
       // }, 500);
     } catch (error) {
-      console.log(error);
+      message.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -87,8 +100,44 @@ const JobProvider = ({ children }) => {
     try {
       const res = await api.post(`employee/jobs/${id}/apply`);
       setApplicationStatus(res.data);
+      message.success(res.data.message || "Successfully applied");
+      return res;
     } catch (error) {
-      console.log(error);
+      const errorMessage =
+        error.response?.data?.message || "An unexpected error occurred.";
+      setApplicationStatus({ status: "error", message: errorMessage });
+      message.error(errorMessage);
+      return { data: { status: "error", message: errorMessage } };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateJobById = async (id, payload) => {
+    setLoading(true);
+    try {
+      const res = await api.put(`employee/job/${id}`);
+      message.success(res.data.message || "Successfully Updated Job");
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "An unexpected error occurred.";
+      message.error(errorMessage);
+      return { data: { status: "error", message: errorMessage } };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteJobById = async (id) => {
+    setLoading(true);
+    try {
+      const res = await api.delete(`employee/job/${id}`);
+      message.success("Successfully Deleted Job");
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "An unexpected error occurred.";
+      message.error(errorMessage);
+      return { data: { status: "error", message: errorMessage } };
     } finally {
       setLoading(false);
     }
@@ -97,8 +146,20 @@ const JobProvider = ({ children }) => {
   const getUserApplications = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/employee/applications");
+      const res = await api.get(`/employee/applications`);
       setApplications(res.data.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getCompanyApplications = async (companyId) => {
+    setLoading(true);
+    try {
+      const res = await api.get(`/employee/${companyId}/applications`);
+      setDashboardApplications(res.data.data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -108,14 +169,44 @@ const JobProvider = ({ children }) => {
 
   const recruiterApplications = async (jobId) => {
     setApplications(null);
+    setLoading(true);
     try {
       const res = await api.get(`/dashboard/jobs/${jobId}/applications`);
       console.log(res.data);
       setApplications(res.data.data);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const getApplicationById = async (id) => {
+    setLoading(true);
+    setUserApplication(null);
+    try {
+      const res = await api.get(`/dashboard/jobs/applications/${id}`);
+      console.log(res.data);
+      setUserApplication(res.data.data.user);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateApplicationById = async (id, status) => {
+    setLoading(true);
+    try {
+      const res = await api.put(`/dashboard/applications/status/${id}`, status);
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <JobContext.Provider
       value={{
@@ -125,15 +216,21 @@ const JobProvider = ({ children }) => {
         jobData,
         applicationStatus,
         applications,
+        userApplication,
         loading,
+        dashboardApplications,
         loadAllJobs,
+        updateApplicationById,
         filterJobs,
         getJobById,
         getDashBoardData,
         postJob,
         applyJob,
         getUserApplications,
+        getApplicationById,
         recruiterApplications,
+        updateJobById,
+        deleteJobById,
       }}
     >
       {children}

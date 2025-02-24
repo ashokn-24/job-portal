@@ -9,6 +9,8 @@ import JobInfo from "./pages/jobs/JobInfo";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Applications from "./pages/user/Applications";
 import UserProfile from "./pages/user/UserProfile";
+import UserDetails from "./components/UserDetails";
+import ForgotPassword from "./pages/register/ForgotPassword";
 
 const App = () => {
   return (
@@ -17,6 +19,7 @@ const App = () => {
         <Routes>
           <Route path={"/"} element={<Home />} />
           <Route path="/jobs" element={<Jobs />} />
+          <Route path="/reset_password" element={<ForgotPassword />} />
           <Route path="/jobs/:id" element={<JobInfo />} />
           <Route path={"/login"} element={<Login />} />
           <Route path={"/profile"} element={<UserProfile />} />
@@ -24,6 +27,7 @@ const App = () => {
           <Route path={"/applications"} element={<Applications />} />
           <Route path={"/employee/signup"} element={<EmployeeSignUpForm />} />
           <Route path={"/dashboard"} element={<Dashboard />} />
+          <Route path={"/dashboard/applicants/:id"} element={<UserDetails />} />
         </Routes>
       </JobProvider>
     </>

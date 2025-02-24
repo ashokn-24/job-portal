@@ -13,6 +13,8 @@ const CheckboxFilter = () => {
     experienceLevel: null,
   });
 
+  const [badgeCounts, setBadgeCounts] = useState({});
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     setFilterData({
@@ -21,27 +23,35 @@ const CheckboxFilter = () => {
     });
   }, [location.search]);
 
+  useEffect(() => {
+    // Initialize badge counts
+    const initialCounts = {};
+    jobs.forEach((job) => {
+      initialCounts[job.workType] = (initialCounts[job.workType] || 0) + 1;
+    });
+    setBadgeCounts(initialCounts);
+  }, [jobs]);
+
+  useEffect(() => {
+    // Update badge counts based on filteredJobs
+    const filteredCounts = {};
+    filteredJobs.forEach((job) => {
+      filteredCounts[job.workType] = (filteredCounts[job.workType] || 0) + 1;
+    });
+    setBadgeCounts(filteredCounts);
+  }, [filteredJobs]);
+
+  const workTypeData = Array.from(new Set(jobs.map((job) => job.workType)));
   const experienceData = Array.from(
     new Set(jobs.map((job) => job.experienceLevel))
   );
-  const workTypeData = Array.from(new Set(jobs.map((job) => job.workType)));
-
-  const count = new Map();
-  workTypeData.forEach((workType) => {
-    count.set(workType, 0);
-  });
-  filteredJobs.forEach((job) => {
-    count.set(job.workType, (count.get(job.workType) || 0) + 1);
-  });
 
   const createQueryParams = (newFilterData) => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams();
 
     Object.entries(newFilterData).forEach(([key, value]) => {
       if (value) {
         params.set(key, value);
-      } else {
-        params.delete(key);
       }
     });
 
@@ -68,6 +78,7 @@ const CheckboxFilter = () => {
     navigate(`?${queryParams}`);
   };
 
+  console.log("badgeCounts", badgeCounts);
   return (
     <div className="rounded-md bg-white px-5 py-10 grid gap-5">
       {/* Work Mode */}
@@ -83,10 +94,9 @@ const CheckboxFilter = () => {
               {mode}
             </Checkbox>
             <Badge
-              count={count.get(mode) || 0}
+              count={badgeCounts[mode] || 0}
               color="blue"
               style={{ backgroundColor: "#0052cc" }}
-              showZero
             />
           </div>
         ))}

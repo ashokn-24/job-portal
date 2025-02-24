@@ -6,6 +6,7 @@ export default {
     extend: {
       backgroundImage: {
         "hero-banner": "url('/banners/hero.jpg')",
+        "info-banner": "url('/banners/info.jpg')",
       },
       colors: {
         darkBlue: "#615EFC",

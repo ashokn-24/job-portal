@@ -9,7 +9,11 @@ import {
   updateJobById,
 } from "../controllers/job.controllers.js";
 import { protect, verifyRole } from "../middleware/auth.middleware.js";
-import { applyJob, getUserApplications } from "../controllers/application.js";
+import {
+  applyJob,
+  getApplicationByCompany,
+  getUserApplications,
+} from "../controllers/application.js";
 
 const router = express.Router();
 
@@ -28,6 +32,12 @@ router.post(
   applyJob
 );
 
+router.get(
+  "/:companyId/applications",
+  protect,
+  verifyRole("employee", "admin"),
+  getApplicationByCompany
+);
 router.get(
   "/applications",
   protect,

@@ -4,6 +4,7 @@ import { Job } from "../models/job.model.js";
 import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { Skill } from "../models/skill.model.js";
+import generateTokensAndSetCookies from "../utils/genrateToken.js";
 
 export const registerAsEmployee = async (req, res) => {
   try {
@@ -22,6 +23,8 @@ export const registerAsEmployee = async (req, res) => {
     }
 
     const existingUser = await User.findOne({ email });
+    let company;
+
     if (existingUser) {
       if (existingUser.role === "employee") {
         return res
@@ -29,7 +32,7 @@ export const registerAsEmployee = async (req, res) => {
           .json({ error: "User is already registered as an employee." });
       }
 
-      let company = await Company.findOne({ name: companyName });
+      company = await Company.findOne({ name: companyName });
       if (!company) {
         company = new Company({
           name: companyName,
@@ -44,48 +47,48 @@ export const registerAsEmployee = async (req, res) => {
 
       existingUser.role = "employee";
       existingUser.company = company._id;
-
       await existingUser.save();
-      generateTokensAndSetCookies(existingUser.id, res);
 
+      generateTokensAndSetCookies(existingUser.id, res); // Set cookies
       return res.status(200).json({
         message: "User updated to employee successfully",
         user: existingUser,
       });
-    } else {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
-      let company = await Company.findOne({ name: companyName });
-      if (!company) {
-        company = new Company({
-          name: companyName,
-          description: companyDescription,
-          website: companyWebsite,
-          address: companyAddress,
-          contactEmail: companyContactEmail,
-          phoneNumber: companyPhoneNumber,
-        });
-        await company.save();
-      }
-
-      const user = new User({
-        fullName: req.body.name,
-        email,
-        password: hashedPassword,
-        role: "employee",
-        company: company._id,
-      });
-
-      await user.save();
-      generateTokensAndSetCookies(user.id, res);
-
-      res
-        .status(201)
-        .json({ message: "Employee registered successfully", user });
     }
+
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+    company = await Company.findOne({ name: companyName });
+    if (!company) {
+      company = new Company({
+        name: companyName,
+        description: companyDescription,
+        website: companyWebsite,
+        address: companyAddress,
+        contactEmail: companyContactEmail,
+        phoneNumber: companyPhoneNumber,
+      });
+      await company.save();
+    }
+
+    const user = new User({
+      name: req.body.name,
+      email,
+      password: hashedPassword,
+      role: "employee",
+      company: company._id,
+    });
+
+    await user.save();
+
+    generateTokensAndSetCookies(user.id, res); // Set cookies
+    return res.status(201).json({
+      message: "Employee registered successfully",
+      user,
+    });
   } catch (error) {
-    console.log("Error in registerAsEmployee controller", error);
-    res.status(500).json({ error: error.message });
+    console.error("Error in registerAsEmployee controller:", error);
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -159,6 +162,38 @@ export const postJob = async (req, res) => {
   }
 };
 
+export const updateJobById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid Job ID." });
+    }
+
+    const updateFields = req.body;
+
+    const updatedJob = await Job.findByIdAndUpdate(id, updateFields, {
+      new: true, // Return the updated document
+      runValidators: true, // Ensure schema validation
+    });
+
+    if (!updatedJob) {
+      return res.status(404).json({ message: "Job not found." });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Job updated successfully.",
+      data: updatedJob,
+    });
+  } catch (error) {
+    console.error("Error in updateJobById controller", error);
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+
 export const getJobs = async (req, res) => {
   try {
     const { jobType, workType, location, experienceLevel, skills } = req.query;
@@ -210,6 +245,7 @@ export const getJobById = async (req, res) => {
       res.json(job);
     } else {
       res.status(404).json({ message: "Job not found" });
+      
     }
   } catch (error) {
     console.error("Error fetching job by ID:", error);
@@ -217,34 +253,6 @@ export const getJobById = async (req, res) => {
   }
 };
 
-export const updateJobById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { jobTitle, jobDescription, type, skills } = req.body;
-
-    const updatedJob = {
-      jobTitle,
-      jobDescription,
-      type,
-      skills,
-    };
-
-    const updateJob = await Job.findByIdAndUpdate(id, updatedJob, {
-      new: true,
-    });
-
-    if (!updateJob) {
-      return res.status(404).json({ message: "Job not found." });
-    }
-    res.status(200).json({
-      success: true,
-      data: updateJob,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
 
 export const updateJob = async (req, res) => {
   try {

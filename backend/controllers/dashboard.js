@@ -53,13 +53,17 @@ export const getApplicationsByJob = async (req, res) => {
 };
 
 export const getApplicationProfile = async (req, res) => {
+  console.log("user application profile");
   try {
-    const { userId } = req.params;
-    const user = await User.findById(userId);
-    if (user) {
+    const { id } = req.params;
+    console.log(id);
+    // const applicationId = new mongoose.Types.ObjectId(jobId);
+    const application = await Application.findById(id).populate("user");
+    console.log(application);
+    if (application) {
       res.status(200).json({
         success: true,
-        data: user,
+        data: application,
       });
     } else {
       return res.json({ message: "User not found" });
@@ -100,6 +104,7 @@ export const updateApplicationStatus = async (req, res) => {
       return res.status(404).json({ message: "Application not found." });
     }
 
+    console.log(status);
     application.status = status;
     await application.save();
 

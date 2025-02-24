@@ -22,7 +22,7 @@ const Filter = ({ jobs, onFilter }) => {
   const skills = new Set();
 
   jobs.forEach((job) => {
-    jobLocation.add(job.location);
+    if (job.location) jobLocation.add(job.location);
     job.skills.forEach((skill) => {
       skills.add(skill);
     });
@@ -31,47 +31,50 @@ const Filter = ({ jobs, onFilter }) => {
   const jobLocationArray = Array.from(jobLocation);
   const skillsArray = Array.from(skills);
 
-  // Helper to parse query parameters
   const parseQueryParams = (search) => {
     const params = new URLSearchParams(search);
-    const parsed = {
+    return {
       jobType: params.get("jobType") || "",
       skills: params.get("skills") ? params.get("skills").split(",") : [],
       location: params.get("location") || "",
     };
-    return parsed;
   };
 
   const createQueryParams = (filterData) => {
     const params = new URLSearchParams();
 
-    if (filterData?.jobType) {
-      params.append("jobType", filterData.jobType);
-    }
-    if (filterData.skills.length > 0) {
+    if (filterData.jobType) params.append("jobType", filterData.jobType);
+    if (filterData.skills.length)
       params.append("skills", filterData.skills.join(","));
-    }
-    if (filterData?.location) {
-      params.append("location", filterData.location);
-    }
+    if (filterData.location) params.append("location", filterData.location);
+
     return params.toString();
   };
 
   useEffect(() => {
-    // Initialize state from query parameters on mount
     const initialFilters = parseQueryParams(location.search);
     setFilterData(initialFilters);
   }, [location.search]);
 
   const handleFilterChange = () => {
     const params = createQueryParams(filterData);
+    if (location.search.slice(1) === params) return;
     navigate(`?${params}`);
     onFilter(params);
   };
 
+  const handleReset = () => {
+    const defaultFilters = { jobType: "", skills: [], location: "" };
+    setFilterData(defaultFilters);
+    navigate("");
+    onFilter("");
+  };
+
+  console.log("jobLocationArray", jobLocation, jobLocationArray);
+
   return (
-    <div className=" border-gray-300 flex items-center rounded-md p-2 space-x-2 justify-center">
-      <div className="flex items-center space-x-2 ">
+    <div className="border-gray-300 flex items-center rounded-md p-2 space-x-2 justify-center">
+      <div className="flex items-center space-x-2">
         <SearchOutlined className="text-mildBlue" />
         <Select
           mode="multiple"
@@ -81,10 +84,7 @@ const Filter = ({ jobs, onFilter }) => {
           onChange={(value) =>
             setFilterData((prev) => ({ ...prev, skills: value }))
           }
-          options={
-            skillsArray.length > 0 &&
-            skillsArray.map((skill) => ({ label: skill, value: skill }))
-          }
+          options={skillsArray.map((skill) => ({ label: skill, value: skill }))}
           className="min-w-40 max-w-[500px] border-0 border-white"
         />
       </div>
@@ -98,13 +98,10 @@ const Filter = ({ jobs, onFilter }) => {
           onChange={(value) =>
             setFilterData((prev) => ({ ...prev, location: value }))
           }
-          options={
-            jobLocationArray.length > 0 &&
-            jobLocationArray.map((location) => ({
-              label: location.split(", ")[0],
-              value: location,
-            }))
-          }
+          options={jobLocationArray.map((location) => ({
+            label: location.split(", ")[0],
+            value: location,
+          }))}
           className="w-40"
         />
       </div>
@@ -132,6 +129,13 @@ const Filter = ({ jobs, onFilter }) => {
         className="bg-darkBlue p-2 px-4 rounded-md text-white font-medium"
       >
         Find Job
+      </button>
+
+      <button
+        onClick={handleReset}
+        className="bg-gray-500 p-2 px-4 rounded-md text-white font-medium"
+      >
+        Reset
       </button>
     </div>
   );
